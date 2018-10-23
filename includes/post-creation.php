@@ -44,10 +44,13 @@ function upload_gallery ( $post_id ) {
 			$old_gallery_ids .= $_POST['old_gallery'];
 		}
 
-		wp_update_post( array (
-			'ID' => $post_id,
-			'post_content' => $_POST['content'] . '[gallery include="' . implode(",", $images_id) . $old_gallery_ids . '"]'
-		) );
+		// only add the shortcode to the post if it actually has any images
+		if ( $old_gallery_ids !== '' || count( $images_id ) !== 0 ) {
+			wp_update_post( array (
+				'ID' => $post_id,
+				'post_content' => $_POST['content'] . '[gallery include="' . implode(",", $images_id) . $old_gallery_ids . '"]'
+			) );
+		}
 	}
 }
 
