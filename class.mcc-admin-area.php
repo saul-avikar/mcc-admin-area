@@ -11,6 +11,9 @@ class MCCAdminArea {
 		add_filter( 'query_vars', [get_called_class(), 'queryVars'] );
 		add_action( 'template_redirect', [get_called_class(), 'templateRedirect'] );
 
+		// Scripts and css
+		add_action('wp_enqueue_scripts', [get_called_class(), 'setupScripts']);
+
 		// Menu
 		add_filter( 'wp_nav_menu_items', [get_called_class(), 'menu'] );
 
@@ -21,6 +24,15 @@ class MCCAdminArea {
 		}
 	}
 
+	// Scripts and css__________________________________________________________
+
+	public static function setupScripts() {
+		$asset_url = plugin_dir_url(__FILE__) . 'assets/';
+
+		wp_enqueue_script('mcc_admin_area', $asset_url . 'mcc-admin-area.js', array('jquery'));
+		wp_enqueue_style('mcc_admin_area', $asset_url . 'mcc-admin-area.css');
+	}
+
 	// Menu_____________________________________________________________________
 
 	public static function menu ( $items ) {
@@ -29,23 +41,41 @@ class MCCAdminArea {
 		$lis = $dom->getElementsByTagName('li');
 
 		foreach($lis as $li) {
-			if ( $li->textContent === ( is_user_logged_in() ? get_option( 'mccadminarea_loginLabel' ) : get_option( 'mccadminarea_postLabel' ) ) ) {
+			if (
+				$li->textContent === (
+					is_user_logged_in() ?
+						get_option( 'mccadminarea_loginLabel' ) :
+						get_option( 'mccadminarea_postLabel' )
+				)
+			) {
 				$li->parentNode->removeChild( $li );
 			}
 		};
 
 		$items = $dom->saveXML();
 
+		// DELETE LATER
 		if ( is_user_logged_in() ) {
 			global $current_user;
 			get_currentuserinfo();
 
 			// Hide the admin bar from students and teachers
-			if ( user_can( $current_user, 'mccadminarea_teacher' ) || user_can( $current_user, 'mccadminarea_student') ){
+			if (
+				user_can( $current_user, 'mccadminarea_teacher' ) ||
+				user_can( $current_user, 'mccadminarea_student')
+			){
 				// Disable the admin bar
 				show_admin_bar( false );
 				// Reset the styles inforced by it
-				echo "<style>.site-navigation-fixed.navigation-top { top: 0 !important;}html {margin: 0 !important;}</style>";
+				echo "<style>
+					.site-navigation-fixed.navigation-top {
+						top: 0 !important;
+					}
+
+					html {
+						margin: 0 !important;
+					}
+				</style>";
 			}
 		}
 
@@ -57,7 +87,13 @@ class MCCAdminArea {
 	// Add an option to the settings menu for the blockstack options page
 	public static function adminMenu(){
 		// add_options_page( 'page title', 'menu title', capability, unique_slug, output_function );
-		add_options_page( 'MCCAdminArea Options', __('MCCAdminArea', 'mccadminarea'), 'manage_options', __FILE__, [get_called_class(), 'optionsForm'] );
+		add_options_page(
+			'MCCAdminArea Options',
+			__('MCCAdminArea', 'mccadminarea'),
+			'manage_options',
+			__FILE__,
+			[get_called_class(), 'optionsForm']
+		);
 	}
 
 	public static function optionsForm() {

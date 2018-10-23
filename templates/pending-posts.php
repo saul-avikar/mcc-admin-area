@@ -12,11 +12,14 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 		You must be a teacher to approve posts.
 	<?php
 } else {
+	// retrieve all unapproved posts
 	$posts = get_posts(array (
 		'post_status' => 'draft'
 	) );
 
+	// Loop thorugh all these posts for display
 	foreach ($posts as $post) {
+		// Set the author name for display
 		$author_name = get_post_meta( $post->ID, 'author_name' );
 
 		if ( count( $author_name ) !== 0 ) {
@@ -25,12 +28,19 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 			$author_name = __("Author was not specified");
 		}
 
-		$image_uri = "";
-
+		// Set the featured image data for display
 		if ( has_post_thumbnail( $post->ID )) {
-			$image_uri = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'single-post-thumbnail' )[0];
+			$thumbnail_id = get_post_thumbnail_id( $post->ID );
+
+			$featured_image = [];
+			$featured_image['uri'] = wp_get_attachment_image_src( $thumbnail_id )[0];
+			$featured_image['title'] = get_the_title( $thumbnail_id );
 		}
+
+		// Set thepost content for display
 		$post_content = $post->post_content;
+
+		// Set the gallery images for display
 		$images = array();
 
 		if ( substr($post_content, -1) === ']' ) {
@@ -45,65 +55,81 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 			}
 		}
 
+		// Shortcode for displaying gallery
 		$shortcode = '[gallery include="' . implode(",", $images) . '"]';
+
+		// Update the content to not include the shortcode as we will have it seperate
 		$post_content = str_replace($shortcode, '', $post_content);
 		?>
 		<ul>
 			<li>
-				<div class="post-title">
+				<div class="MCCAdminArea-post-title MCCAdminArea-pointer">
 					<?php echo $author_name; ?> - <?php echo $post->post_title; ?>
 				</div>
-				<div class="post-content-container">
-					<div class="static">
-						<img class="post-image" src="<?php echo $image_uri; ?>" />
-						<div class="post-date">
-							<?php
-							echo $post->post_date;
-							?>
+				<div class="MCCAdminArea-hidden">
+					<!-- Display a preview of the post -->
+					<div class="MCCAdminArea-static">
+						<?php if ( isset( $featured_image ) ) { ?>
+							<img src="<?php echo $featured_image['uri']; ?>" />
+						<?php } ?>
+
+						<div>
+							<?php echo $post->post_date; ?>
 						</div>
-						<div class="post-content">
-							<?php
-							echo $post_content;
-							echo '<br /><br />';
-							echo do_shortcode($shortcode);
-							?>
+
+						<div>
+							<?php echo $post_content; ?>
+							<br />
+							<br />
+							<?php echo do_shortcode($shortcode); ?>
 						</div>
-						<button class="edit-post">Edit Post</button>
+						<button class="MCCAdminArea-edit-post">Edit Post</button>
 					</div>
-					<form class="dynamic">
+
+					<!-- a form with all the post data for a teacher to edit -->
+					<form class="MCCAdminArea-dynamic MCCAdminArea-hidden">
 						<label>
-							Name <input type="text" name="author_name" value="<?php echo $author_name; ?>" />
+							Name
+							<input
+								type="text"
+								name="author_name"
+								value="<?php echo $author_name; ?>"
+							/>
 						</label>
 
 
 						<label>
-							Title <input type="text" id="title" name="title" value="<?php echo $post->post_title; ?>" />
+							Title
+							<input
+								type="text"
+								id="title"
+								name="title"
+								value="<?php echo $post->post_title; ?>"
+							/>
 						</label>
 
 						<label>
 							Content
-
-							<textarea id="content" name="content"><?php echo $post_content; ?></textarea>
+							<textarea id="content" name="content">
+								<?php echo $post_content; ?>
+							</textarea>
 						</label>
 
 						Featured Image
 						<?php
-						if ( get_post_thumbnail_id( $post->ID ) ) {
-							echo get_the_title( get_post_thumbnail_id( $post->ID ) );
-							?>
-							<br />
-							<?php
+						if ( isset( $featured_image ) ) {
+							echo $featured_image['title'];
 						}
 						?>
-						<input type="file" accept="image/*" class="featured-image-input" name="image" />
+						<input type="file" accept="image/*" name="image" />
 						<?php wp_nonce_field( 'image', 'image_nonce' ); ?>
 
 						Gallery
 						<?php
 						foreach ($images as $gal_image) {
 							?>
-							<div class="existing-image-gallery-items" name="gal_<?php echo $gal_image ?>" style="background-image: url('<?php echo wp_get_attachment_image_src($gal_image)[0]; ?>');">
-								<?php echo get_the_title($gal_image); ?> <span class="image-gallery-remove">(X)</span><br />
+							<div name="gal_<?php echo $gal_image ?>" style="background-image: url('<?php echo wp_get_attachment_image_src($gal_image)[0]; ?>');">
+								<?php echo get_the_title($gal_image); ?> <span class="MCCAdminArea-image-gallery-remove">(X)</span><br />
 							</div>
 							<?php
 						}
@@ -112,103 +138,12 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 						<input type="file" accept="image/*" multiple id="gallery" name="gallery[]" />
 						<?php wp_nonce_field( 'gallery', 'gallery_nonce' ); ?>
 
-						<button class="edit-post">Cancel editing</button>
+						<button class="MCCAdminArea-edit-post">Cancel editing</button>
 					</form>
-					<button class="approve-post" name="mcc_<?php echo $post->ID; ?>">Approve Post</button>
+					<button class="MCCAdminArea-approve-post" name="mcc_<?php echo $post->ID; ?>">Approve Post</button>
 				</div>
 			</li>
 		</ul>
 		<?php
 	}
 }
-?>
-<style>
-	.post-title {
-		cursor: pointer;
-	}
-
-	.post-content-container {
-		display: none;
-	}
-
-	.dynamic {
-		display: none;
-	}
-</style>
-<script>
-	(function ($) {
-		$(".image-gallery-remove").click(function () {
-			$(this).parent().hide(0);
-		});
-
-		$(".post-title").click(function () {
-			$(this).next().toggle(100);
-		});
-
-		$(".edit-post").click(function (e) {
-			e.preventDefault();
-			$(this).parent().parent().find(".dynamic").toggle(100);
-			$(this).parent().parent().find(".static").toggle(100);
-		});
-
-		$(".approve-post").click(function () {
-			// change state of this post
-			var postContainer = $(this).parent().parent();
-			var postId = $(this).attr("name");
-			var form = new FormData();
-
-			postId = postId.substr(4, postId.length);
-
-			if ($(this).parent().find(".dynamic").is(":visible")) {
-				form = new FormData($(this).parent().find("form")[0]);
-
-				var existingImages = $(this).parent().find(".dynamic").children(".existing-image-gallery-items");
-
-				if (existingImages.length > 0) {
-					var oldGallery = [];
-
-					for (var existingImage of existingImages) {
-						if ($(existingImage).is(":visible")) {
-							var id = $(existingImage).attr("name");
-
-							id = parseInt(id.slice(4));
-
-							oldGallery.push(id);
-						}
-					}
-
-					form.append("old_gallery", oldGallery);
-				}
-			}
-
-			form.append("post_id", postId)
-
-			var data = $.ajax({
-				url: '/mccadminarea_post',
-				type: 'POST',
-				data: form,
-				processData: false,
-				contentType: false
-			}).always(function (data) {
-				var response = null;
-
-				try {
-					response = JSON.parse(data.responseText);
-				} catch (e) {
-					try {
-						response = JSON.parse(data);
-					} catch (e) {
-						console.error(data);
-					}
-				}
-
-				if (response.error) {
-					console.log(response.msg);
-				} else {
-					postContainer.hide(100);
-				}
-			});
-		});
-	}(jQuery))
-</script>
-<?php

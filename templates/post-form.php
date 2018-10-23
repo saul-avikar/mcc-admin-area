@@ -3,7 +3,6 @@
  * Author: Saul Boyd (avikar.io)
  * License: MIT (https://opensource.org/licenses/MIT)
  */
-
 global $current_user;
 get_currentuserinfo();
 
@@ -18,7 +17,7 @@ if ( user_can( $current_user, 'mccadminarea_student') ) {
 }
 ?>
 
-<form method="post" enctype="multipart/form-data" id="form">
+<form method="post" enctype="multipart/form-data" id="MCCAdminArea-post-form">
 	<label for="name">Your Name</label>
 	<input type="text" id="name" name="author_name" />
 
@@ -63,45 +62,10 @@ if ( user_can( $current_user, 'mccadminarea_student') ) {
 	<input type="file" accept="image/*" multiple id="gallery" name="gallery[]" />
 	<?php wp_nonce_field( 'gallery', 'gallery_nonce' ); ?>
 	<br />
-	<input id="submit" name="submit" type="submit" value="Submit" />
+	<input id="MCCAdminArea-post-submit" name="submit" type="submit" value="Submit" />
 </form>
 
-<div class="success-message" style="display: none;">
+<div class="MCCAdminArea-post-success-message MCCAdminArea-hidden">
 	Success!
 </div>
-
-<script>
-	(function ($) {
-		$("#submit").click(function (e) {
-			e.preventDefault();
-
-			var data = $.ajax({
-				url: '/mccadminarea_post',
-				type: 'POST',
-				data: new FormData($('form')[0]),
-				processData: false,
-				contentType: false,
-			}).always(function (data) {
-				var response = null;
-
-				try {
-					response = JSON.parse(data.responseText);
-				} catch (e) {
-					try {
-						response = JSON.parse(data);
-					} catch (e) {
-						console.error(data);
-					}
-				}
-
-				if (response.error) {
-					console.log(response.msg);
-				} else{
-					$("form").hide(100);
-					$(".success-message").show(100);
-				}
-			});
-		});
-	}(jQuery));
-</script>
 <?php
