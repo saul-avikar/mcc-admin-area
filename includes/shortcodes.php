@@ -8,16 +8,22 @@ add_shortcode( 'post_form', 'postForm_func' );
 add_shortcode( 'pending_posts', 'pendingPosts_func' );
 add_shortcode( 'notice_board', 'noticeBoard_func' );
 
+function js_redirect_home() {
+	$string = '<script type="text/javascript">';
+    $string .= 'if (window.location.pathname !== "/")';
+    $string .= 'window.location = "/";';
+    $string .= '</script>';
+
+    echo $string;
+}
+
 // Login
 function loginForm_func ( $atts ){
 	ob_start();
 
 	if ( is_user_logged_in() ) {
-		?>
-			<!-- You must be logged out to log in. -->
-		<?php
+		js_redirect_home();
 	} else {
-		// require_once( plugin_dir_path( __FILE__ ) . '../templates/login.php' );
 		wp_login_form();
 	}
 
@@ -31,9 +37,7 @@ function postForm_func ( $atts ){
 	if ( is_user_logged_in() ) {
 		require_once( plugin_dir_path( __FILE__ ) . '../templates/post-form.php' );
 	} else {
-		?>
-			<!-- You must be logged in to post pages. -->
-		<?php
+		js_redirect_home();
 	}
 
 	return ob_get_clean();
@@ -46,9 +50,7 @@ function pendingPosts_func ( $atts ){
 	if ( is_user_logged_in() ) {
 		require_once( plugin_dir_path( __FILE__ ) . '../templates/pending-posts.php' );
 	} else {
-		?>
-			<!-- You must be logged in to approve posts. -->
-		<?php
+		js_redirect_home();
 	}
 
 	return ob_get_clean();
