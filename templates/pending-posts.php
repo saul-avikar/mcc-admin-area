@@ -84,7 +84,6 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 							Content
 
 							<textarea id="content" name="content"><?php echo $post_content; ?></textarea>
-							<!-- <?php wp_editor( $post_content . do_shortcode($shortcode), 'mcc_content', array('textarea_name' => 'mcc_content') ); ?> -->
 						</label>
 
 						Featured Image
@@ -103,8 +102,8 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 						<?php
 						foreach ($images as $gal_image) {
 							?>
-							<div class="existing-image-gallery-items" name="gal_<?php echo $gal_image ?>">
-								<?php echo get_the_title($gal_image); ?> <span class="image-gallery-remove">(remove)</span><br />
+							<div class="existing-image-gallery-items" name="gal_<?php echo $gal_image ?>" style="background-image: url('<?php echo wp_get_attachment_image_src($gal_image)[0]; ?>');">
+								<?php echo get_the_title($gal_image); ?> <span class="image-gallery-remove">(X)</span><br />
 							</div>
 							<?php
 						}
@@ -169,11 +168,13 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 					var oldGallery = [];
 
 					for (var existingImage of existingImages) {
-						var id = $(existingImage).attr("name");
+						if ($(existingImage).is(":visible")) {
+							var id = $(existingImage).attr("name");
 
-						id = parseInt(id.slice(4));
+							id = parseInt(id.slice(4));
 
-						oldGallery.push(id);
+							oldGallery.push(id);
+						}
 					}
 
 					form.append("old_gallery", oldGallery);
@@ -182,7 +183,7 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 
 			form.append("post_id", postId)
 
-			/*var data = $.ajax({
+			var data = $.ajax({
 				url: '/mccadminarea_post',
 				type: 'POST',
 				data: form,
@@ -206,7 +207,7 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 				} else {
 					postContainer.hide(100);
 				}
-			});*/
+			});
 		});
 	}(jQuery))
 </script>

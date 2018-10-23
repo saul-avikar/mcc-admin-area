@@ -6,7 +6,7 @@
 
 class MCCAdminArea {
 	public static function init() {
-		// Hooks for directing the blockstack-login url
+		// Hooks for directing the post requests
 		add_filter( 'generate_rewrite_rules', [get_called_class(), 'rewriteRules'] );
 		add_filter( 'query_vars', [get_called_class(), 'queryVars'] );
 		add_action( 'template_redirect', [get_called_class(), 'templateRedirect'] );
@@ -20,6 +20,8 @@ class MCCAdminArea {
 			add_action( 'admin_init', [get_called_class(), 'registerSettings'] );
 		}
 	}
+
+	// Menu_____________________________________________________________________
 
 	public static function menu ( $items ) {
 		$dom = new DOMDocument;

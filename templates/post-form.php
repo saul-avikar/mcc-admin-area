@@ -27,7 +27,6 @@ if ( user_can( $current_user, 'mccadminarea_student') ) {
 
 	<label for="mcc_content">Post Content</label>
 	<textarea id="content" name="content"></textarea>
-	<!-- <?php wp_editor( '', 'mcc_content', array('textarea_name' => 'mcc_content') ); ?> -->
 
 	<?php
 	if ( user_can( $current_user, 'mccadminarea_teacher') ) {
@@ -67,6 +66,10 @@ if ( user_can( $current_user, 'mccadminarea_student') ) {
 	<input id="submit" name="submit" type="submit" value="Submit" />
 </form>
 
+<div class="success-message" style="display: none;">
+	Success!
+</div>
+
 <script>
 	(function ($) {
 		$("#submit").click(function (e) {
@@ -93,6 +96,9 @@ if ( user_can( $current_user, 'mccadminarea_student') ) {
 
 				if (response.error) {
 					console.log(response.msg);
+				} else{
+					$("form").hide(100);
+					$(".success-message").show(100);
 				}
 			});
 		});

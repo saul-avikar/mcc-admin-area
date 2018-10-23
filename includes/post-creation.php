@@ -9,6 +9,48 @@ function success( $msg = 'Success.') {
 	die('{"error": false, "msg": "' . $msg . '"}');
 }
 
+function upload_gallery ( $post_id ) {
+	if (
+		isset( $_POST['gallery_nonce'], $_FILES["gallery"] ) &&
+		wp_verify_nonce( $_POST['gallery_nonce'], 'gallery' )
+	) {
+		$files = $_FILES["gallery"];
+		$images_id = array();
+
+		foreach ($files['name'] as $key => $value) {
+			if ($files['name'][$key]) {
+				$file = array(
+					'name' => $files['name'][$key],
+					'type' => $files['type'][$key],
+					'tmp_name' => $files['tmp_name'][$key],
+					'error' => $files['error'][$key],
+					'size' => $files['size'][$key]
+				);
+
+				$_FILES = array ("upload_file" => $file);
+
+				foreach ($_FILES as $file => $array) {
+					$images_id[] = media_handle_upload( $file, $post_id );
+				}
+			}
+		}
+
+		$old_gallery_ids = '';
+		if ( isset( $_POST['old_gallery'] ) && $_POST['old_gallery'] ) {
+			if ( count( $images_id ) > 0) {
+				$old_gallery_ids = ',';
+			}
+
+			$old_gallery_ids .= $_POST['old_gallery'];
+		}
+
+		wp_update_post( array (
+			'ID' => $post_id,
+			'post_content' => $_POST['content'] . '[gallery include="' . implode(",", $images_id) . $old_gallery_ids . '"]'
+		) );
+	}
+}
+
 if ( is_user_logged_in() ) {
 	if (
 		isset(
@@ -72,38 +114,7 @@ if ( is_user_logged_in() ) {
 			}
 
 			// Gallery
-			if (
-				isset( $_POST['gallery_nonce'], $_FILES["gallery"] ) &&
-				wp_verify_nonce( $_POST['gallery_nonce'], 'gallery' )
-			) {
-				$files = $_FILES["gallery"];
-				$images_id = array();
-
-				foreach ($files['name'] as $key => $value) {
-					if ($files['name'][$key]) {
-						$file = array(
-							'name' => $files['name'][$key],
-							'type' => $files['type'][$key],
-							'tmp_name' => $files['tmp_name'][$key],
-							'error' => $files['error'][$key],
-							'size' => $files['size'][$key]
-						);
-
-						$_FILES = array ("upload_file" => $file);
-
-						foreach ($_FILES as $file => $array) {
-							$images_id[] = media_handle_upload( $file, $post_id );
-						}
-					}
-				}
-
-				add_post_meta($post_id, 'gallery', $images_id);
-
-				wp_update_post( array (
-					'ID' => $post_id,
-					'post_content' => $_POST['content'] . '[gallery include="' . implode(",", $images_id) . '"]'
-				) );
-			}
+			upload_gallery ( $post_id );
 
 			success();
 		} else {
@@ -132,6 +143,22 @@ if ( is_user_logged_in() ) {
 			if ( isset( $_POST['author_name'] ) && $_POST['author_name'] ) {
 				update_post_meta( $post_id, 'author_name', $_POST['author_name'] );
 			}
+
+			// Feature image
+			require_once( ABSPATH . 'wp-admin/includes/image.php' );
+			require_once( ABSPATH . 'wp-admin/includes/file.php' );
+			require_once( ABSPATH . 'wp-admin/includes/media.php' );
+
+			if ( wp_verify_nonce( $_POST['image_nonce'], 'image' ) ) {
+				$thumbnail_id = media_handle_upload( 'image', $post_id );
+
+				if ( !is_wp_error( $thumbnail_id ) ) {
+					set_post_thumbnail( $post_id, $thumbnail_id );
+				}
+			}
+
+			// Gallery
+			upload_gallery ( $post_id );
 
 			success();
 		} else {
