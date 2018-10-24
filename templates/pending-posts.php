@@ -17,51 +17,54 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 		'post_status' => 'draft'
 	]);
 
-	// Loop thorugh all these posts for display
-	foreach ($posts as $post) {
-		// Set the author name for display
-		$author_name = get_post_meta( $post->ID, 'author_name' );
+	?>
+	<ul class="MCCAdminArea-pending-post-list">
+		<?php
 
-		if ( count( $author_name ) !== 0 ) {
-			$author_name = $author_name[0];
-		} else {
-			$author_name = __("Author was not specified");
-		}
+		// Loop thorugh all these posts for display
+		foreach ($posts as $post) {
+			// Set the author name for display
+			$author_name = get_post_meta( $post->ID, 'author_name' );
 
-		// Set the featured image data for display
-		if ( has_post_thumbnail( $post->ID )) {
-			$thumbnail_id = get_post_thumbnail_id( $post->ID );
-
-			$featured_image = [];
-			$featured_image['uri'] = wp_get_attachment_image_src( $thumbnail_id )[0];
-			$featured_image['title'] = get_the_title( $thumbnail_id );
-		}
-
-		// Set thepost content for display
-		$post_content = $post->post_content;
-
-		// Set the gallery images for display
-		$images = [];
-
-		if ( substr($post_content, -1) === ']' ) {
-			$start_pos = strrpos($post_content, '[gallery include="');
-			$gal_string = substr($post_content, $start_pos + 18);
-
-			$gal_string = rtrim($gal_string, '"]');
-			$gal_ids = explode(',', $gal_string);
-
-			foreach ($gal_ids as $gal_id) {
-				$images[] = $gal_id;
+			if ( count( $author_name ) !== 0 ) {
+				$author_name = $author_name[0];
+			} else {
+				$author_name = __('Author was not specified', 'mcc-admin-area');
 			}
-		}
 
-		// Shortcode for displaying gallery
-		$shortcode = '[gallery include="' . implode(",", $images) . '"]';
+			// Set the featured image data for display
+			if ( has_post_thumbnail( $post->ID )) {
+				$thumbnail_id = get_post_thumbnail_id( $post->ID );
 
-		// Update the content to not include the shortcode as we will have it seperate
-		$post_content = str_replace($shortcode, '', $post_content);
-		?>
-		<ul>
+				$featured_image = [];
+				$featured_image['uri'] = wp_get_attachment_image_src( $thumbnail_id )[0];
+				$featured_image['title'] = get_the_title( $thumbnail_id );
+			}
+
+			// Set thepost content for display
+			$post_content = $post->post_content;
+
+			// Set the gallery images for display
+			$images = [];
+
+			if ( substr($post_content, -1) === ']' ) {
+				$start_pos = strrpos($post_content, '[gallery include="');
+				$gal_string = substr($post_content, $start_pos + 18);
+
+				$gal_string = rtrim($gal_string, '"]');
+				$gal_ids = explode(',', $gal_string);
+
+				foreach ($gal_ids as $gal_id) {
+					$images[] = $gal_id;
+				}
+			}
+
+			// Shortcode for displaying gallery
+			$shortcode = '[gallery include="' . implode(",", $images) . '"]';
+
+			// Update the content to not include the shortcode as we will have it seperate
+			$post_content = str_replace($shortcode, '', $post_content);
+			?>
 			<li>
 				<div class="MCCAdminArea-post-title MCCAdminArea-pointer">
 					<?php echo $author_name; ?> - <?php echo $post->post_title; ?>
@@ -83,13 +86,13 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 							<br />
 							<?php echo do_shortcode($shortcode); ?>
 						</div>
-						<button class="MCCAdminArea-edit-post">Edit Post</button>
+						<button class="MCCAdminArea-edit-post"><?php _e('Edit Post', 'mcc-admin-area'); ?></button>
 					</div>
 
 					<!-- a form with all the post data for a teacher to edit -->
 					<form class="MCCAdminArea-dynamic MCCAdminArea-hidden">
 						<label>
-							Name
+							<?php _e('Name', 'mcc-admin-area'); ?>
 							<input
 								type="text"
 								name="author_name"
@@ -97,9 +100,8 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 							/>
 						</label>
 
-
 						<label>
-							Title
+							<?php _e('Title', 'mcc-admin-area'); ?>
 							<input
 								type="text"
 								id="title"
@@ -109,13 +111,13 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 						</label>
 
 						<label>
-							Content
+							<?php _e('Content', 'mcc-admin-area'); ?>
 							<textarea id="content" name="content">
 								<?php echo $post_content; ?>
 							</textarea>
 						</label>
 
-						Featured Image
+						<?php _e('Featured Image', 'mcc-admin-area'); ?>
 						<?php
 						if ( isset( $featured_image ) ) {
 							echo $featured_image['title'];
@@ -124,7 +126,7 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 						<input type="file" accept="image/*" name="image" />
 						<?php wp_nonce_field( 'image', 'image_nonce' ); ?>
 
-						Gallery
+						<?php _e('Gallery', 'mcc-admin-area'); ?>
 						<?php
 						foreach ($images as $gal_image) {
 							?>
@@ -138,12 +140,11 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 						<input type="file" accept="image/*" multiple id="gallery" name="gallery[]" />
 						<?php wp_nonce_field( 'gallery', 'gallery_nonce' ); ?>
 
-						<button class="MCCAdminArea-edit-post">Cancel editing</button>
+						<button class="MCCAdminArea-edit-post"><?php _e('Cancel editing', 'mcc-admin-area'); ?></button>
 					</form>
-					<button class="MCCAdminArea-approve-post" name="mcc_<?php echo $post->ID; ?>">Approve Post</button>
+					<button class="MCCAdminArea-approve-post" name="mcc_<?php echo $post->ID; ?>"><?php _e('Approve Post', 'mcc-admin-area'); ?></button>
 				</div>
 			</li>
-		</ul>
-		<?php
-	}
-}
+		<?php } ?>
+	</ul>
+<?php }

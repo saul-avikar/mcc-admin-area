@@ -8,24 +8,30 @@ get_currentuserinfo();
 
 if ( user_can( $current_user, 'mccadminarea_student') ) {
 	?>
-	<h1>Posting as a student</h1>
+	<h1><?php _e('Posting as a student', 'mcc-admin-area'); ?></h1>
 	<?php
 } elseif ( user_can( $current_user, 'mccadminarea_teacher') ) {
 	?>
-	<h1>Posting as a teacher</h1>
+	<h1><?php _e('Posting as a teacher', 'mcc-admin-area'); ?></h1>
 	<?php
 }
 ?>
 
 <form method="post" enctype="multipart/form-data" id="MCCAdminArea-post-form">
-	<label for="name">Your Name</label>
-	<input type="text" id="name" name="author_name" />
+	<label>
+		<?php _e('Your Name', 'mcc-admin-area'); ?>
+		<input type="text" name="author_name" />
+	</label>
 
-	<label for="title">Post Title</label>
-	<input type="text" id="title" name="title" />
+	<label>
+		<?php _e('Post Title', 'mcc-admin-area'); ?>
+		<input type="text" name="title" />
+	</label>
 
-	<label for="mcc_content">Post Content</label>
-	<textarea id="content" name="content"></textarea>
+	<label>
+		<?php _e('Post Content', 'mcc-admin-area'); ?>
+		<textarea name="content"></textarea>
+	</label>
 
 	<?php
 	if ( user_can( $current_user, 'mccadminarea_teacher') ) {
@@ -54,18 +60,22 @@ if ( user_can( $current_user, 'mccadminarea_student') ) {
 	}
 	?>
 
-	<label for="image">Featured Image</label>
-	<input type="file" accept="image/*" id="image" name="image" />
+	<label>
+		<?php _e('Featured Image', 'mcc-admin-area'); ?>
+		<input type="file" accept="image/*" name="image" />
+	</label>
 	<?php wp_nonce_field( 'image', 'image_nonce' ); ?>
 
-	<label for="gallery">Gallery</label>
-	<input type="file" accept="image/*" multiple id="gallery" name="gallery[]" />
+	<label>
+		<?php _e('Gallery', 'mcc-admin-area'); ?>
+		<input type="file" accept="image/*" multiple name="gallery[]" />
+	</label>
 	<?php wp_nonce_field( 'gallery', 'gallery_nonce' ); ?>
 	<br />
-	<input id="MCCAdminArea-post-submit" name="submit" type="submit" value="Submit" />
+	<input id="MCCAdminArea-post-submit" name="submit" type="submit" value="<?php _e('Submit', 'mcc-admin-area'); ?>" />
 </form>
 
 <div class="MCCAdminArea-post-success-message MCCAdminArea-hidden">
-	Success!
+	<?php _e('Success!', 'mcc-admin-area'); ?>
 </div>
 <?php

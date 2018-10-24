@@ -14,11 +14,17 @@
 		] );
 
 		foreach ($posts as $post) {
-			?>
-			Date: <?php echo $post->post_date; ?><br />
-			Title: <?php echo $post->post_title; ?><br />
-			Content: <?php echo $post->post_content; ?><br />
-			<?php
+			_e('Date:', 'mcc-admin-area');
+			echo $post->post_date;
+			echo '<br />';
+
+			_e('Title:', 'mcc-admin-area');
+			echo $post->post_title;
+			echo '<br />';
+
+			_e('Content:', 'mcc-admin-area');
+			echo $post->post_content;
+			echo '<br />';
 		}
 	}
 	?>

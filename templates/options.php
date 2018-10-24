@@ -17,14 +17,7 @@
 			<label for="mccadminarea_loginLabel"><?php _e( 'Login Menu Label:', 'mccadminarea' ); ?></label>
 			<input type="text" id="mccadminarea_loginLabel" name="mccadminarea_loginLabel" value="<?php echo get_option( 'mccadminarea_loginLabel' ); ?>" />
 		</div>
-		<?php  submit_button(); ?>
+		<?php submit_button(); ?>
 	</form>
 </div>
-
-<script>
-</script>
-
-<style>
-</style>
-
 <?php
