@@ -15,19 +15,19 @@ function upload_gallery ( $post_id ) {
 		wp_verify_nonce( $_POST['gallery_nonce'], 'gallery' )
 	) {
 		$files = $_FILES["gallery"];
-		$images_id = array();
+		$images_id = [];
 
 		foreach ($files['name'] as $key => $value) {
 			if ($files['name'][$key]) {
-				$file = array(
+				$file = [
 					'name' => $files['name'][$key],
 					'type' => $files['type'][$key],
 					'tmp_name' => $files['tmp_name'][$key],
 					'error' => $files['error'][$key],
 					'size' => $files['size'][$key]
-				);
+				];
 
-				$_FILES = array ("upload_file" => $file);
+				$_FILES = ["upload_file" => $file];
 
 				foreach ($_FILES as $file => $array) {
 					$images_id[] = media_handle_upload( $file, $post_id );
@@ -46,10 +46,10 @@ function upload_gallery ( $post_id ) {
 
 		// only add the shortcode to the post if it actually has any images
 		if ( $old_gallery_ids !== '' || count( $images_id ) !== 0 ) {
-			wp_update_post( array (
+			wp_update_post( [
 				'ID' => $post_id,
 				'post_content' => $_POST['content'] . '[gallery include="' . implode(",", $images_id) . $old_gallery_ids . '"]'
-			) );
+			] );
 		}
 	}
 }
@@ -74,13 +74,13 @@ if ( is_user_logged_in() ) {
 		get_currentuserinfo();
 
 		// Post
-		$post_id = wp_insert_post( array (
+		$post_id = wp_insert_post( [
 			'comment_status' => 'closed',
 			'ping_status' => 'closed',
 			'post_status' => user_can( $current_user, 'mccadminarea_teacher') ? 'publish' : 'draft',
 			'post_title' => $_POST['title'],
 			'post_content' => $_POST['content']
-		) );
+		] );
 
 		if ( !is_wp_error( $post_id ) ) {
 			// Categories
@@ -126,10 +126,10 @@ if ( is_user_logged_in() ) {
 	} elseif ( isset( $_POST['post_id'] ) && $_POST['post_id'] ) {
 		// Aprove post
 		if ( user_can( $current_user, 'mccadminarea_teacher') ) {
-			$post_args = array(
+			$post_args = [
 				'ID' => $_POST['post_id'],
 				'post_status' => 'publish'
-			);
+			];
 
 			if ( isset( $_POST['title'] ) && $_POST['title'] ) {
 				$post_args['post_title'] = $_POST['title'];

@@ -29,7 +29,7 @@ class MCCAdminArea {
 	public static function setupScripts() {
 		$asset_url = plugin_dir_url(__FILE__) . 'assets/';
 
-		wp_enqueue_script('mcc_admin_area', $asset_url . 'mcc-admin-area.js', array('jquery'));
+		wp_enqueue_script('mcc_admin_area', $asset_url . 'mcc-admin-area.js', ['jquery']);
 		wp_enqueue_style('mcc_admin_area', $asset_url . 'mcc-admin-area.css');
 	}
 
@@ -118,9 +118,9 @@ class MCCAdminArea {
 
 
 	public static function rewriteRules( $wp_rewrite ) {
-		$feed_rules = array(
+		$feed_rules = [
 			'mccadminarea_post/?$' => 'index.php?mccadminarea_post=true'
-		);
+		];
 
 		$wp_rewrite->rules = $feed_rules + $wp_rewrite->rules;
 		return $wp_rewrite->rules;
@@ -146,17 +146,17 @@ class MCCAdminArea {
 		flush_rewrite_rules();
 
 		// Add new roles
-		add_role( 'mccadminarea_teacher', __('Teacher'), array(
+		add_role( 'mccadminarea_teacher', __('Teacher'), [
 			'read' => true,
 			'edit_posts' => true,
 			'edit_others_posts' => true,
 			'publish_posts' => true
-		));
+		]);
 
-		add_role( 'mccadminarea_student', __('Student'), array(
+		add_role( 'mccadminarea_student', __('Student'), [
 			'read' => true,
 			'edit_posts' => true
-		));
+		]);
 
 		// Add the new categories
 		$cat = wp_create_category( 'School Posts' );

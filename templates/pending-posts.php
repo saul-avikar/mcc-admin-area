@@ -13,9 +13,9 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 	<?php
 } else {
 	// retrieve all unapproved posts
-	$posts = get_posts(array (
+	$posts = get_posts([
 		'post_status' => 'draft'
-	) );
+	]);
 
 	// Loop thorugh all these posts for display
 	foreach ($posts as $post) {
@@ -41,7 +41,7 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 		$post_content = $post->post_content;
 
 		// Set the gallery images for display
-		$images = array();
+		$images = [];
 
 		if ( substr($post_content, -1) === ']' ) {
 			$start_pos = strrpos($post_content, '[gallery include="');

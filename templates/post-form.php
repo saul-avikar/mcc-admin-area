@@ -31,10 +31,10 @@ if ( user_can( $current_user, 'mccadminarea_student') ) {
 	if ( user_can( $current_user, 'mccadminarea_teacher') ) {
 		$term = get_term_by( 'name', 'School Posts', 'category' );
 
-		$children = get_terms( $term->taxonomy, array(
+		$children = get_terms( $term->taxonomy, [
 			'parent'    => $term->term_id,
 			'hide_empty' => false
-		) );
+		] );
 
 		if ( $children ) {
 			foreach( $children as $subcat ) {

@@ -8,10 +8,10 @@
 <div>
 	<?php
 	if ( isset($atts) && isset($atts["category"]) ) {
-		$posts = get_posts(array (
+		$posts = get_posts( [
 			'post_status' => 'publish',
 			'category_name' => $atts["category"]
-		) );
+		] );
 
 		foreach ($posts as $post) {
 			?>
