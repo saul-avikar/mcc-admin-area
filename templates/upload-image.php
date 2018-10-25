@@ -45,6 +45,13 @@ $singular = isset( $singular ) ? $singular : false;
 		}
 		?>
 	</div>
+	<div class="MCCAdminArea-upload-image-failure MCCAdminArea-hidden">
+		<?php _e('Something went wrong.', 'mcc-admin-area'); ?>
+	</div>
+	<div class="MCCAdminArea-upload-image-size-failure MCCAdminArea-hidden">
+		<?php _e('Image is too large to upload.', 'mcc-admin-area'); ?>
+	</div>
+	<div class="MCCAdminArea-upload-image-upload-progress MCCAdminArea-hidden"></div>
 	<form class="MCCAdminArea-upload-image-form">
 		<label class="MCCAdminArea-upload-image-form-label">
 			<?php _e('Add image', 'mcc-admin-area'); ?>
@@ -58,12 +65,5 @@ $singular = isset( $singular ) ? $singular : false;
 		</label>
 		<?php wp_nonce_field( 'image_single', 'image_single_nonce' ); ?>
 	</form>
-	<div class="MCCAdminArea-upload-image-failure MCCAdminArea-hidden">
-		<?php _e('Something went wrong.', 'mcc-admin-area'); ?>
-	</div>
-	<div class="MCCAdminArea-upload-image-size-failure MCCAdminArea-hidden">
-		<?php _e('Image is too large to upload.', 'mcc-admin-area'); ?>
-	</div>
-	<div class="MCCAdminArea-upload-image-upload-progress MCCAdminArea-hidden"></div>
 </div>
 <?php
