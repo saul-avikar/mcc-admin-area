@@ -5,3 +5,61 @@
 .MCCAdminArea-pointer {
 	cursor: pointer;
 }
+
+.MCCAdminArea-upload-images {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	grid-template-rows: auto;
+	grid-gap: 10px;
+
+	justify-items: center;
+
+	width: 100%;
+}
+
+.MCCAdminArea-upload-images > div {
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	width: 150px;
+	height: 150px;
+
+	border: 2px solid black;
+	border-radius: 10px;
+
+	display: grid;
+	grid-gap: 0px;
+	grid-template-columns: 20% 60% 20%;
+	grid-template-rows: 20% 60% 18%;
+	grid-template-areas:	".		.		close"
+							".		.		."
+							".		title	."
+}
+
+.MCCAdminArea-image-gallery-remove {
+	color: red;
+	cursor: pointer;
+	border: 1px solid red;
+	border-radius: 100px;
+	margin: 2px;
+	grid-area: close;
+	text-align: center;
+
+	background: rgb(204, 204, 204);
+    background: rgba(204, 204, 204, 0.5);
+}
+
+.MCCAdminArea-image-gallery-title {
+	color: white;
+	grid-area: title;
+	text-align: center;
+	border-radius: 10px;
+	box-sizing: border-box;
+	padding: 0px 5px;
+
+	text-align: center;
+
+	overflow: hidden;
+
+	background: rgb(204, 204, 204);
+    background: rgba(204, 204, 204, 0.5);
+}

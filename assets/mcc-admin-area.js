@@ -2,7 +2,6 @@
 	var transitionSpeed = 200;
 	// Submit data, uses callbacks (puke) for browser compatibility
 	function submitData (data, successCallback, failCallback) {
-		console.log("Attempting to send data");
 		$.ajax({
 			url: '/mccadminarea_post',
 			type: 'POST',
@@ -67,14 +66,14 @@
 				// Success
 				var imagesList = container.find(".MCCAdminArea-upload-images");
 				var imageElement = $("<div data-id='" + imageData.id + "' style='background-image: url(\"" + imageData.src + "\");'></div>");
-				var removalElement = $("<span>(X)</span>");
+				var removalElement = $("<div class='MCCAdminArea-image-gallery-remove'>X</div>");
 
 				if (isSingular) {
 					imagesList.text("");
 				}
 
-				imageElement.append(imageData.title);
 				removalElement.appendTo(imageElement);
+				imageElement.append("<div class='MCCAdminArea-image-gallery-title'>" + imageData.title + "</div>");
 				imageElement.appendTo(imagesList);
 
 				// Add the event to remove the image

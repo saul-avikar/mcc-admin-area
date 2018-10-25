@@ -16,8 +16,13 @@ $singular = isset( $singular ) ? $singular : false;
 				data-id="<?php echo $form_data['featured_image']['id']; ?>"
 				style='background-image: url("<?php echo $form_data['featured_image']['uri'] ?>");'
 			>
-				<?php echo $form_data['featured_image']['title']; ?>
-				<span class="MCCAdminArea-image-gallery-remove">(X)</span>
+				<div class="MCCAdminArea-image-gallery-title">
+					<?php echo $form_data['featured_image']['title']; ?>
+				</div>
+
+				<div class="MCCAdminArea-image-gallery-remove">
+					X
+				</div>
 			</div>
 			<?php
 		} elseif ( isset( $form_data['gallery'] ) && !$singular ) {
@@ -27,8 +32,13 @@ $singular = isset( $singular ) ? $singular : false;
 					data-id="<?php echo $gal_item['id']; ?>"
 					style='background-image: url("<?php echo $gal_item['uri'] ?>");'
 				>
-					<?php echo $gal_item['title']; ?>
-					<span class="MCCAdminArea-image-gallery-remove">(X)</span>
+					<div class="MCCAdminArea-image-gallery-title">
+						<?php echo $gal_item['title']; ?>
+					</div>
+
+					<div class="MCCAdminArea-image-gallery-remove">
+						X
+					</div>
 				</div>
 				<?php
 			}
@@ -36,8 +46,8 @@ $singular = isset( $singular ) ? $singular : false;
 		?>
 	</div>
 	<form class="MCCAdminArea-upload-image-form">
-		<label>
-			<?php _e('Change this to make it look like it wasnt made in the 90s', 'mcc-admin-area'); ?>
+		<label class="MCCAdminArea-upload-image-form-label">
+			<?php _e('Add image', 'mcc-admin-area'); ?>
 			<input
 				type="file"
 				accept="image/*"
