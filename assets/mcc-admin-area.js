@@ -9,32 +9,24 @@
 			processData: false,
 			contentType: false,
 			// Progress report
-			xhr: function(){
+			xhr: function () {
 				var xhr = new window.XMLHttpRequest();
+
 				//Upload progress, request sending to server
 				xhr.upload.addEventListener("progress", function(e){
-					console.log("in Upload progress");
 					if (e.lengthComputable) {
-						//percentComplete = (e.loaded / e.total) * 100;
 						percentComplete = parseInt( (e.loaded / e.total * 100), 10);
-						console.log(percentComplete);
+
+						if (progressCallback) {
+							progressCallback(percentComplete);
+						}
 					}
-					else{
-						console.log("Length not computable.");
-					}
-					console.log("Upload Done");
 				}, false);
 
 				//Download progress, waiting for response from server
 				xhr.addEventListener("progress", function(e){
-					console.log("in Download progress");
-					if (e.lengthComputable) {
-						//percentComplete = (e.loaded / e.total) * 100;
-						percentComplete = parseInt( (e.loaded / e.total * 100), 10);
-						console.log(percentComplete);
-					}
-					else{
-						console.log("Length not computable.");
+					if (progressCallback) {
+						progressCallback(100);
 					}
 				}, false);
 				return xhr;
@@ -58,11 +50,6 @@
 				successCallback(response);
 			}
 		});
-
-
-									if (progressCallback) {
-										progressCallback(percentComplete);
-									}
 	}
 
 	function retrieveImageIdsFromChildren (container) {
@@ -95,17 +82,23 @@
 			var isSingular = $(this).attr("data-singular") === "true";
 			var container = fileInput.closest(".MCCAdminArea-file-upload-container");
 			var fileSize = e.currentTarget.files[0].size / 1024 / 1024;
+			var progressElement = container.find(".MCCAdminArea-upload-image-upload-progress");
+			var failureMessageElement = container.find(".MCCAdminArea-upload-image-failure");
+			var sizeRestrictionElement = container.find(".MCCAdminArea-upload-image-size-failure");
 
 			// Hide any errors as we will display them again later if needed
-			container.find(".MCCAdminArea-upload-image-failure").hide(transitionSpeed);
-			container.find(".MCCAdminArea-upload-image-size-failure").hide(transitionSpeed);
+			failureMessageElement).hide(transitionSpeed);
+			sizeRestrictionElement.hide(transitionSpeed);
 
 			// 2MB restriction
 			if (fileSize > 2) {
 				// Image is too large
-				container.find(".MCCAdminArea-upload-image-size-failure").show(transitionSpeed);
+				sizeRestrictionElement.show(transitionSpeed);
 				return;
 			}
+
+			// Show progress
+			progressElement.show(transitionSpeed);
 
 			submitData(form, function (imageData) {
 				// Success
@@ -125,14 +118,18 @@
 				removalElement.click(function () {
 					hideAndDelete(this);
 				});
+
+				progressElement.hide(transitionSpeed);
 			}, function (error) {
 				// Fail
 				console.error(error);
 
-				container.find(".MCCAdminArea-upload-image-failure").show(transitionSpeed);
+				failureMessageElement.show(transitionSpeed);
+
+				progressElement.hide(transitionSpeed);
 			}, function (progress) {
 				// Progress callback
-				console.log(progress);
+				progressElement.text = progress;
 			});
 		});
 
