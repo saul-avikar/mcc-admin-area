@@ -28,8 +28,10 @@
 			}
 			?>
 		</div>
-	<?php } else { ?>
-		Error: form is not specified.
-	<?php } ?>
+	<?php
+	} else {
+		_e('Error: form is not specified.', 'mcc-admin-area');
+	}
+	?>
 </div>
 <?php

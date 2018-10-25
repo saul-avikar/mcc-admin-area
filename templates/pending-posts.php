@@ -61,9 +61,7 @@ function setFormData( $post ) {
 }
 
 if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
-	?>
-		You must be a teacher to approve posts.
-	<?php
+	_e('You must be a teacher to approve posts.', 'mcc-admin-area');
 } else {
 	// retrieve all unapproved posts
 	$posts = get_posts([
@@ -91,11 +89,11 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 						<?php require( plugin_dir_path( __FILE__ ) . './form.php' ); ?>
 					</div>
 
-					<button class="MCCAdminArea-edit-post">Edit</button>
+					<button class="MCCAdminArea-edit-post"><?php _e('Edit', 'mcc-admin-area'); ?></button>
 					<button class="MCCAdminArea-post-submit" data-id="<?php echo $post->ID; ?>"><?php _e('Approve Post', 'mcc-admin-area'); ?></button>
 
 					<div class="MCCAdminArea-failure-message MCCAdminArea-hidden">
-						Something went wrong.
+						<?php _e('Something went wrong.', 'mcc-admin-area'); ?>
 					</div>
 				</div>
 			</li>

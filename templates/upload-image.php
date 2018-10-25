@@ -37,7 +37,7 @@ $singular = isset( $singular ) ? $singular : false;
 	</div>
 	<form class="MCCAdminArea-upload-image-form">
 		<label>
-			Change this to make it look like it wasn't made in the 90's
+			<?php _e('Change this to make it look like it wasnt made in the 90s', 'mcc-admin-area'); ?>
 			<input
 				type="file"
 				accept="image/*"
