@@ -7,18 +7,26 @@
 ?>
 <form method="post" enctype="multipart/form-data" class="MCCAdminArea-post-form">
 	<label>
-		<?php _e('Your Name', 'mcc-admin-area'); ?>
-		<input type="text" name="author_name" />
+		<?php _e('Name', 'mcc-admin-area'); ?>
+		<input
+			type="text"
+			name="author_name"
+			value="<?php echo isset($form_data) ? $form_data['author'] : '' ?>"
+		/>
 	</label>
 
 	<label>
 		<?php _e('Post Title', 'mcc-admin-area'); ?>
-		<input type="text" name="title" />
+		<input
+			type="text"
+			name="title"
+			value="<?php echo isset($form_data) ? $form_data['title'] : '' ?>"
+		/>
 	</label>
 
 	<label>
 		<?php _e('Post Content', 'mcc-admin-area'); ?>
-		<textarea name="content"></textarea>
+		<textarea name="content"><?php echo isset($form_data) ? $form_data['content'] : '' ?></textarea>
 	</label>
 
 	<?php

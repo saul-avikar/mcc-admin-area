@@ -201,8 +201,8 @@
 		$(".MCCAdminArea-edit-post").click(function (e) {
 			e.preventDefault();
 
-			$(this).parent().parent().find(".MCCAdminArea-dynamic").toggle(100);
-			$(this).parent().parent().find(".MCCAdminArea-static").toggle(100);
+			$(this).parent().find(".MCCAdminArea-post-preview").toggle(100);
+			$(this).parent().find(".MCCAdminArea-post-form-container").toggle(100);
 		});
 	});
 }(jQuery));
