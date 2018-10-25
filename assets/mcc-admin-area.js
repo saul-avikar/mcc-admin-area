@@ -58,12 +58,14 @@
 			var fileInput = $(this);
 			var form = new FormData($(this).closest("form")[0]);
 			var isSingular = $(this).attr("data-singular") === "true";
+			var container = fileInput.closest(".MCCAdminArea-file-upload-container");
 
-			console.log(isSingular);
+			// Hide any errors as we will display them again later if needed
+			container.find(".MCCAdminArea-upload-image-failure").hide(transitionSpeed);
 
 			submitData(form, function (imageData) {
 				// Success
-				var imagesList = fileInput.closest(".MCCAdminArea-file-upload-container").find(".MCCAdminArea-upload-images");
+				var imagesList = container.find(".MCCAdminArea-upload-images");
 				var imageElement = $("<div data-id='" + imageData.id + "' style='background-image: url(\"" + imageData.src + "\");'></div>");
 				var removalElement = $("<span>(X)</span>");
 
@@ -81,7 +83,9 @@
 				});
 			}, function (error) {
 				// Fail
-				console.log(error);
+				console.error(error);
+
+				container.find(".MCCAdminArea-upload-image-failure").show(transitionSpeed);
 			});
 		});
 
@@ -95,7 +99,7 @@
 
 
 			// Disable to stop button spammers
-			$(".MCCAdminArea-post-submit").prop("disabled", true);
+			$(this).prop("disabled", true);
 
 			// Hide any errors as we will display them again later if needed
 			container.find(".MCCAdminArea-failure-message").hide(transitionSpeed);

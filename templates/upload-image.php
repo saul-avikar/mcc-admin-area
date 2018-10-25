@@ -48,5 +48,8 @@ $singular = isset( $singular ) ? $singular : false;
 		</label>
 		<?php wp_nonce_field( 'image_single', 'image_single_nonce' ); ?>
 	</form>
+	<div class="MCCAdminArea-upload-image-failure MCCAdminArea-hidden">
+		<?php _e('Something went wrong.', 'mcc-admin-area'); ?>
+	</div>
 </div>
 <?php
