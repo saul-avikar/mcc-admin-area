@@ -61,5 +61,8 @@ $singular = isset( $singular ) ? $singular : false;
 	<div class="MCCAdminArea-upload-image-failure MCCAdminArea-hidden">
 		<?php _e('Something went wrong.', 'mcc-admin-area'); ?>
 	</div>
+	<div class="MCCAdminArea-upload-image-size-failure MCCAdminArea-hidden">
+		<?php _e('Image is too large to upload.', 'mcc-admin-area'); ?>
+	</div>
 </div>
 <?php

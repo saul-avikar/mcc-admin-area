@@ -53,14 +53,22 @@
 
 	$(document).ready(function () {
 		// galery image single upload___________________________________________
-		$(".MCCAdminArea-upload-image").change(function () {
+		$(".MCCAdminArea-upload-image").change(function (e) {
 			var fileInput = $(this);
 			var form = new FormData($(this).closest("form")[0]);
 			var isSingular = $(this).attr("data-singular") === "true";
 			var container = fileInput.closest(".MCCAdminArea-file-upload-container");
+			var fileSize = e.currentTarget.files[0].size / 1024 / 1024;
 
 			// Hide any errors as we will display them again later if needed
 			container.find(".MCCAdminArea-upload-image-failure").hide(transitionSpeed);
+			container.find(".MCCAdminArea-upload-image-size-failure").hide(transitionSpeed);
+
+			if (fileSize > 2) {
+				// Image is too large
+				container.find(".MCCAdminArea-upload-image-size-failure").show(transitionSpeed);
+				return;
+			}
 
 			submitData(form, function (imageData) {
 				// Success
