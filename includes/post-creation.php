@@ -152,7 +152,10 @@ if ( is_user_logged_in() ) {
 			require_once( ABSPATH . 'wp-admin/includes/file.php' );
 			require_once( ABSPATH . 'wp-admin/includes/media.php' );
 
-			if ( wp_verify_nonce( $_POST['image_nonce'], 'image' ) ) {
+			if (
+				isset( $_POST['image_nonce'] ) &&
+				wp_verify_nonce( $_POST['image_nonce'], 'image' )
+			) {
 				$thumbnail_id = media_handle_upload( 'image', $post_id );
 
 				if ( !is_wp_error( $thumbnail_id ) ) {

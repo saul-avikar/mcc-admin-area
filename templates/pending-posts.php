@@ -65,7 +65,7 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 			// Update the content to not include the shortcode as we will have it seperate
 			$post_content = str_replace($shortcode, '', $post_content);
 			?>
-			<li>
+			<li class="MCCAdminArea-pending-post">
 				<div class="MCCAdminArea-post-title MCCAdminArea-pointer">
 					<?php echo $author_name; ?> - <?php echo $post->post_title; ?>
 				</div>
@@ -117,8 +117,8 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 							</textarea>
 						</label>
 
-						<?php _e('Featured Image', 'mcc-admin-area'); ?>
 						<?php
+						_e('Featured Image', 'mcc-admin-area');
 						if ( isset( $featured_image ) ) {
 							echo $featured_image['title'];
 						}
@@ -126,8 +126,8 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 						<input type="file" accept="image/*" name="image" />
 						<?php wp_nonce_field( 'image', 'image_nonce' ); ?>
 
-						<?php _e('Gallery', 'mcc-admin-area'); ?>
 						<?php
+						_e('Gallery', 'mcc-admin-area');
 						foreach ($images as $gal_image) {
 							?>
 							<div name="gal_<?php echo $gal_image ?>" style="background-image: url('<?php echo wp_get_attachment_image_src($gal_image)[0]; ?>');">

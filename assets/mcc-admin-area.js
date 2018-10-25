@@ -1,13 +1,16 @@
+console.log("Loaded script");
 (function ($) {
+	console.log("Browser handled self-called function");
 	// Submit data, uses callbacks (puke) for browser compatibility
 	function submitData (data, successCallback, failCallback) {
+		console.log("Attempting to send data");
 		$.ajax({
 			url: '/mccadminarea_post',
 			type: 'POST',
 			data: data,
 			processData: false,
 			contentType: false,
-		}).always(function (data) {
+		}).complete(function (data) {
 			var response = null;
 
 			try {
@@ -20,6 +23,8 @@
 				}
 			}
 
+			console.log(response, data);
+
 			if (response.error) {
 				failCallback(response.msg)
 			} else{
@@ -29,8 +34,10 @@
 	}
 
 	$(document).ready(function () {
+		console.log("Browser handled ready event");
 		// post submission
 		$("#MCCAdminArea-post-submit").click(function (e) {
+			console.log("Browser handled click event");
 			e.preventDefault();
 
 			submitData(new FormData($('#MCCAdminArea-post-form')[0]), function () {
