@@ -14,6 +14,7 @@
 				//Upload progress, request sending to server
 				xhr.upload.addEventListener("progress", function(evt){
 					console.log("in Upload progress");
+<<<<<<< HEAD
 					if (e.lengthComputable) {
 						//percentComplete = (e.loaded / e.total) * 100;
 						percentComplete = parseInt( (e.loaded / e.total * 100), 10);
@@ -22,6 +23,8 @@
 					else{
 						console.log("Length not computable.");
 					}
+=======
+>>>>>>> 733f96fcaa14ba905eee65f4857e92e8692d8d7d
 					console.log("Upload Done");
 				}, false);
 
