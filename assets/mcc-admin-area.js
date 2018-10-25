@@ -12,7 +12,7 @@
 			xhr: function(){
 				var xhr = new window.XMLHttpRequest();
 				//Upload progress, request sending to server
-				xhr.upload.addEventListener("progress", function(evt){
+				xhr.upload.addEventListener("progress", function(e){
 					console.log("in Upload progress");
 					if (e.lengthComputable) {
 						//percentComplete = (e.loaded / e.total) * 100;
