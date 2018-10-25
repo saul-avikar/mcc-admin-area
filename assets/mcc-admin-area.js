@@ -129,7 +129,7 @@
 				progressElement.hide(transitionSpeed);
 			}, function (progress) {
 				// Progress callback
-				progressElement.text = progress;
+				progressElement.text(progress + "%");
 			});
 		});
 
