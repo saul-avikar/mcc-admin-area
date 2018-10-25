@@ -11,6 +11,7 @@ function setFormData( $post ) {
 	$form_data = [
 		'title' => $post->post_title,
 		'date' => $post->post_date,
+		'content' => $post->post_content,
 		'featured_image' => isset( $featured_image ) ? $featured_image : NULL,
 		'gallery' => []
 	];
@@ -92,6 +93,10 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 
 					<button class="MCCAdminArea-edit-post">Edit</button>
 					<button class="MCCAdminArea-post-submit" data-id="<?php echo $post->ID; ?>"><?php _e('Approve Post', 'mcc-admin-area'); ?></button>
+
+					<div class="MCCAdminArea-failure-message MCCAdminArea-hidden">
+						Something went wrong.
+					</div>
 				</div>
 			</li>
 		<?php } ?>

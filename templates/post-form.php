@@ -22,15 +22,11 @@ if ( user_can( $current_user, 'mccadminarea_student') ) {
 	<button class="MCCAdminArea-post-submit">
 		<?php _e('Submit', 'mcc-admin-area'); ?>
 	</button>
-	<div class="MCCAdminArea-success-message">
-		Success!
+	<div class="MCCAdminArea-success-message MCCAdminArea-hidden">
+		<?php _e('Success!', 'mcc-admin-area'); ?>
 	</div>
-	<div class="MCCAdminArea-failure-message">
-		Fail!
+	<div class="MCCAdminArea-failure-message MCCAdminArea-hidden">
+		<?php _e('Something went wrong.', 'mcc-admin-area'); ?>
 	</div>
-</div>
-
-<div class="MCCAdminArea-post-success-message MCCAdminArea-hidden">
-	<?php _e('Success!', 'mcc-admin-area'); ?>
 </div>
 <?php

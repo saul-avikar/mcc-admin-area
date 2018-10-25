@@ -6,7 +6,7 @@
 
 ?>
 <form method="post" enctype="multipart/form-data" class="MCCAdminArea-post-form">
-	<label>
+	<label class="MCCAdminArea-post-form-author">
 		<?php _e('Name', 'mcc-admin-area'); ?>
 		<input
 			type="text"
@@ -15,7 +15,7 @@
 		/>
 	</label>
 
-	<label>
+	<label class="MCCAdminArea-post-form-title">
 		<?php _e('Post Title', 'mcc-admin-area'); ?>
 		<input
 			type="text"
@@ -24,7 +24,7 @@
 		/>
 	</label>
 
-	<label>
+	<label class="MCCAdminArea-post-form-content">
 		<?php _e('Post Content', 'mcc-admin-area'); ?>
 		<textarea name="content"><?php echo isset($form_data) ? $form_data['content'] : '' ?></textarea>
 	</label>
@@ -41,7 +41,10 @@
 		if ( $children ) {
 			foreach( $children as $subcat ) {
 				?>
-				<label for="mcc_<?php echo $subcat->slug; ?>">
+				<label
+					for="mcc_<?php echo $subcat->slug; ?>"
+					class="MCCAdminArea-post-form-categories"
+				>
 					<?php echo $subcat->name; ?>
 					<input
 						name="mcc_<?php echo $subcat->slug; ?>"
@@ -57,14 +60,18 @@
 	?>
 </form>
 
+<span>
+	<?php _e('Featured Image', 'mcc-admin-area'); ?>
+</span>
 <?php
-	_e('Featured Image', 'mcc-admin-area');
 	$singular = true;
 	require( plugin_dir_path( __FILE__ ) . './upload-image.php' );
 ?>
 
+<span>
+	<?php _e('Gallery', 'mcc-admin-area'); ?>
+</span>
 <?php
-	_e('Gallery', 'mcc-admin-area');
 	$singular = false;
 	require( plugin_dir_path( __FILE__ ) . './upload-image.php' );
 ?>

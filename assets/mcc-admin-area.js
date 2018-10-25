@@ -93,6 +93,13 @@
 			var postId = $(this).attr("data-id");
 			var form = new FormData(container.find("form")[0]);
 
+
+			// Disable to stop button spammers
+			$(".MCCAdminArea-post-submit").prop("disabled", true);
+
+			// Hide any errors as we will display them again later if needed
+			container.find(".MCCAdminArea-failure-message").hide(transitionSpeed);
+
 			// Only for post approval
 			if (postId) {
 				// remove prefix (mcc_)
@@ -130,71 +137,19 @@
 			// Send it!
 			submitData(form, function (message) {
 				// Success
-				console.log(message);
-			}, function (error) {
-				// Fail
-				console.log(error);
-			});
-		});
-		// MCCAdminArea-post-form
-
-		// post submission
-		$("#MCCAdminArea-post-submit").click(function (e) {
-			e.preventDefault();
-
-			submitData(new FormData($('#MCCAdminArea-post-form')[0]), function () {
-				// Success
-				$("#MCCAdminArea-post-form").hide(transitionSpeed);
-				$(".MCCAdminArea-post-success-message").show(transitionSpeed);
-			}, function (error) {
-				// Fail
-				console.log(error);
-			});
-		});
-
-		// post approval
-		$(".MCCAdminArea-approve-post").click(function () {
-			// change state of this post
-			var postContainer = $(this).parent().parent(); // <li>
-			var dynamicForm = postContainer.find(".MCCAdminArea-dynamic"); // <form>
-
-			var form = new FormData();
-
-			// remove prefix (mcc_)
-			var postId = $(this).attr("name").slice(4);
-
-			// if the form is being used when we click approve:
-			if (dynamicForm.is(":visible")) {
-				form = new FormData(dynamicForm[0]);
-
-				var existingImages = dynamicForm.children(".existing-image-gallery-items");
-
-				// If the gallery has any children add the id's to the form
-				if (existingImages.length > 0) {
-					var oldGallery = [];
-
-					for (var existingImage of existingImages) {
-						if ($(existingImage).is(":visible")) {
-							var id = $(existingImage).attr("name");
-
-							id = parseInt(id.slice(4));
-
-							oldGallery.push(id);
-						}
-					}
-
-					form.append("old_gallery", oldGallery);
+				if (postId) {
+					container.parent().hide(transitionSpeed);
+				} else {
+					container.find(".MCCAdminArea-success-message").show(transitionSpeed);
+					container.find(":not(.MCCAdminArea-success-message)").hide(transitionSpeed);
 				}
-			}
-
-			form.append("post_id", postId)
-
-			submitData(form, function () {
-				// Success
-					postContainer.hide(transitionSpeed);
 			}, function (error) {
 				// Fail
-				console.log(error);
+				console.error(error);
+				container.find(".MCCAdminArea-failure-message").show(transitionSpeed);
+
+				// Re-enable the button to try again.
+				$(".MCCAdminArea-post-submit").prop("disabled", false);
 			});
 		});
 
