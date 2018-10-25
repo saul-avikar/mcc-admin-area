@@ -1,4 +1,5 @@
 (function ($) {
+	var transitionSpeed = 200;
 	// Submit data, uses callbacks (puke) for browser compatibility
 	function submitData (data, successCallback, failCallback) {
 		console.log("Attempting to send data");
@@ -42,6 +43,15 @@
 		return images;
 	}
 
+	function hideAndDelete (el) {
+		var parent = $(el).parent();
+		parent.hide(transitionSpeed);
+
+		window.setTimeout(function () {
+			parent.remove();
+		}, transitionSpeed);
+	}
+
 	$(document).ready(function () {
 		// galery image single upload___________________________________________
 		$(".MCCAdminArea-upload-image").change(function () {
@@ -67,7 +77,7 @@
 
 				// Add the event to remove the image
 				removalElement.click(function () {
-					$(this).parent().remove();
+					hideAndDelete(this);
 				});
 			}, function (error) {
 				// Fail
@@ -80,16 +90,15 @@
 			e.preventDefault();
 
 			var container = $(this).parent();
-			//var postId = $(this).attr("name");
+			var postId = $(this).attr("data-id");
 			var form = new FormData(container.find("form")[0]);
-/*
+
 			// Only for post approval
 			if (postId) {
 				// remove prefix (mcc_)
-				postId = postId.slice(4);
-			} else {
+				form.append("post_id", postId);
+			}
 
-			}*/
 			// Gallery and feature image
 			var imageFieldContainers = container.find(".MCCAdminArea-upload-images");
 			var galleryImages = undefined;
@@ -135,8 +144,8 @@
 
 			submitData(new FormData($('#MCCAdminArea-post-form')[0]), function () {
 				// Success
-				$("#MCCAdminArea-post-form").hide(100);
-				$(".MCCAdminArea-post-success-message").show(100);
+				$("#MCCAdminArea-post-form").hide(transitionSpeed);
+				$(".MCCAdminArea-post-success-message").show(transitionSpeed);
 			}, function (error) {
 				// Fail
 				console.log(error);
@@ -182,7 +191,7 @@
 
 			submitData(form, function () {
 				// Success
-					postContainer.hide(100);
+					postContainer.hide(transitionSpeed);
 			}, function (error) {
 				// Fail
 				console.log(error);
@@ -191,18 +200,20 @@
 
 		// Misc
 		$(".MCCAdminArea-image-gallery-remove").click(function () {
-			$(this).parent().remove();
+			hideAndDelete(this);
 		});
 
 		$(".MCCAdminArea-post-title").click(function () {
-			$(this).next().toggle(100);
+			$(this).next().toggle(transitionSpeed);
 		});
 
 		$(".MCCAdminArea-edit-post").click(function (e) {
 			e.preventDefault();
 
-			$(this).parent().find(".MCCAdminArea-post-preview").toggle(100);
-			$(this).parent().find(".MCCAdminArea-post-form-container").toggle(100);
+			$(this).parent().find(".MCCAdminArea-post-preview").toggle(transitionSpeed);
+			$(this).parent().find(".MCCAdminArea-post-form-container").toggle(transitionSpeed);
+
+			$(this).text( $(this).text() === "Edit" ? "Cancel" : "Edit");
 		});
 	});
 }(jQuery));

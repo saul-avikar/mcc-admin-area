@@ -73,7 +73,6 @@ if ( is_user_logged_in() ) {
 		}
 
 		// Post
-
 		$post_args = [
 			'comment_status' => 'closed',
 			'ping_status' => 'closed',
@@ -88,9 +87,14 @@ if ( is_user_logged_in() ) {
 			$post_args['post_content'] = $_POST['content'];
 		}
 
-		$post_id = wp_insert_post( $post_args );
+		if ( $is_editing ) {
+			$post_args['ID'] = $_POST['post_id'];
+			$post_id = wp_update_post( $post_args );
+		} else {
+			$post_id = wp_insert_post( $post_args );
+		}
 
-		if ( !is_wp_error( $post_id ) ) {
+		if ( isset( $post_id ) && !is_wp_error( $post_id ) ) {
 			// Categories
 
 			// Remove all existing categories
@@ -132,7 +136,7 @@ if ( is_user_logged_in() ) {
 
 			success();
 		} else {
-			error('Failed to create post.');
+			error('Failed to create/update post.');
 		}
 	} else {
 		error('Missing required parameters.');

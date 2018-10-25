@@ -52,9 +52,9 @@ function setFormData( $post ) {
 				'uri' => wp_get_attachment_image_src($gal_id)[0]
 			];
 		}
-	}
 
-	$form_data['content'] = str_replace($form_data['gallery_shortcode'], '', $post->post_content); // remove shortcode
+		$form_data['content'] = str_replace($form_data['gallery_shortcode'], '', $post->post_content); // remove shortcode
+	}
 
 	return $form_data;
 }
