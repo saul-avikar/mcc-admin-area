@@ -97,6 +97,8 @@
 				return;
 			}
 
+			fileInput.prop("disabled", true);
+
 			// Show progress
 			progressElement.show(transitionSpeed);
 
@@ -120,6 +122,8 @@
 				});
 
 				progressElement.hide(transitionSpeed);
+
+				fileInput.prop("disabled", false);
 			}, function (error) {
 				// Fail
 				console.error(error);
@@ -127,6 +131,8 @@
 				failureMessageElement.show(transitionSpeed);
 
 				progressElement.hide(transitionSpeed);
+
+				fileInput.prop("disabled", false);
 			}, function (progress) {
 				// Progress callback
 				progressElement.text(progress + "%");
