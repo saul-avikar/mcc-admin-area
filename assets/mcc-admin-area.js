@@ -1,13 +1,36 @@
 (function ($) {
 	var transitionSpeed = 200;
 	// Submit data, uses callbacks (puke) for browser compatibility
-	function submitData (data, successCallback, failCallback) {
+	function submitData (data, successCallback, failCallback, progressCallback = null) {
 		$.ajax({
 			url: '/mccadminarea_post',
 			type: 'POST',
 			data: data,
 			processData: false,
 			contentType: false,
+			// Progress report
+			xhr: function(){
+				var xhr = new window.XMLHttpRequest();
+				//Upload progress, request sending to server
+				xhr.upload.addEventListener("progress", function(evt){
+					console.log("in Upload progress");
+					console.log("Upload Done");
+				}, false);
+
+				//Download progress, waiting for response from server
+				xhr.addEventListener("progress", function(e){
+					console.log("in Download progress");
+					if (e.lengthComputable) {
+						//percentComplete = (e.loaded / e.total) * 100;
+						percentComplete = parseInt( (e.loaded / e.total * 100), 10);
+						console.log(percentComplete);
+					}
+					else{
+						console.log("Length not computable.");
+					}
+				}, false);
+				return xhr;
+			},
 		}).complete(function (data) {
 			var response = null;
 
@@ -27,6 +50,11 @@
 				successCallback(response);
 			}
 		});
+
+
+									if (progressCallback) {
+										progressCallback(percentComplete);
+									}
 	}
 
 	function retrieveImageIdsFromChildren (container) {
@@ -64,6 +92,7 @@
 			container.find(".MCCAdminArea-upload-image-failure").hide(transitionSpeed);
 			container.find(".MCCAdminArea-upload-image-size-failure").hide(transitionSpeed);
 
+			// 2MB restriction
 			if (fileSize > 2) {
 				// Image is too large
 				container.find(".MCCAdminArea-upload-image-size-failure").show(transitionSpeed);
@@ -93,6 +122,9 @@
 				console.error(error);
 
 				container.find(".MCCAdminArea-upload-image-failure").show(transitionSpeed);
+			}, function (progress) {
+				// Progress callback
+				console.log(progress);
 			});
 		});
 
