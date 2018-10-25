@@ -55,7 +55,11 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 				$gal_ids = explode(',', $gal_string);
 
 				foreach ($gal_ids as $gal_id) {
-					$images[] = $gal_id;
+					$images[] = [
+						'id' => $gal_id,
+						'title' => get_the_title($gal_id),
+						'uri' => wp_get_attachment_image_src($gal_image)[0]
+					];
 				}
 			}
 
@@ -90,58 +94,27 @@ if ( !user_can( $current_user, 'mccadminarea_teacher' ) ) {
 					</div>
 
 					<!-- a form with all the post data for a teacher to edit -->
-					<form class="MCCAdminArea-dynamic MCCAdminArea-hidden">
-						<label>
-							<?php _e('Name', 'mcc-admin-area'); ?>
-							<input
-								type="text"
-								name="author_name"
-								value="<?php echo $author_name; ?>"
-							/>
-						</label>
-
-						<label>
-							<?php _e('Title', 'mcc-admin-area'); ?>
-							<input
-								type="text"
-								id="title"
-								name="title"
-								value="<?php echo $post->post_title; ?>"
-							/>
-						</label>
-
-						<label>
-							<?php _e('Content', 'mcc-admin-area'); ?>
-							<textarea id="content" name="content">
-								<?php echo $post_content; ?>
-							</textarea>
-						</label>
-
-						<?php
-						_e('Featured Image', 'mcc-admin-area');
-						if ( isset( $featured_image ) ) {
-							echo $featured_image['title'];
-						}
-						?>
-						<input type="file" accept="image/*" name="image" />
-						<?php wp_nonce_field( 'image', 'image_nonce' ); ?>
-
-						<?php
-						_e('Gallery', 'mcc-admin-area');
-						foreach ($images as $gal_image) {
-							?>
-							<div name="gal_<?php echo $gal_image ?>" style="background-image: url('<?php echo wp_get_attachment_image_src($gal_image)[0]; ?>');">
-								<?php echo get_the_title($gal_image); ?> <span class="MCCAdminArea-image-gallery-remove">(X)</span><br />
-							</div>
-							<?php
-						}
-						?>
-
-						<input type="file" accept="image/*" multiple id="gallery" name="gallery[]" />
-						<?php wp_nonce_field( 'gallery', 'gallery_nonce' ); ?>
-
-						<button class="MCCAdminArea-edit-post"><?php _e('Cancel editing', 'mcc-admin-area'); ?></button>
-					</form>
+					<?php
+					$form_data = [
+						'author' => $author_name,
+						'title' => $post->post_title,
+						'content' => $post_content,
+						'featured_image' => isset( $featured_image ) ? $featured_image : NULL,
+						'gallery' => $images
+					];
+					?>
+					<div>
+						<?php require( plugin_dir_path( __FILE__ ) . './form.php' ); ?>
+						<button class="MCCAdminArea-post-submit">
+							<?php _e('Submit', 'mcc-admin-area'); ?>
+						</button>
+						<div class="MCCAdminArea-success-message">
+							Success!
+						</div>
+						<div class="MCCAdminArea-failure-message">
+							Fail!
+						</div>
+					</div>
 					<button class="MCCAdminArea-approve-post" name="mcc_<?php echo $post->ID; ?>"><?php _e('Approve Post', 'mcc-admin-area'); ?></button>
 				</div>
 			</li>

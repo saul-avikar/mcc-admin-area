@@ -1,6 +1,6 @@
 <?php
 // add_post_meta($post_id, '_thumbnail_id', $attach_id);
-
+// max file 2mb
 function error( $msg ) {
 	die('{"error": true, "msg": "' . $msg . '"}');
 }
@@ -9,81 +9,93 @@ function success( $msg = 'Success.') {
 	die('{"error": false, "msg": "' . $msg . '"}');
 }
 
-function upload_gallery ( $post_id ) {
-	if (
-		isset( $_POST['gallery_nonce'], $_FILES["gallery"] ) &&
-		wp_verify_nonce( $_POST['gallery_nonce'], 'gallery' )
-	) {
-		$files = $_FILES["gallery"];
-		$images_id = [];
+function add_gallery ( $post_id ) {
+	if ( isset( $_POST['gallery'] ) && $_POST['gallery'] ) {
+		wp_update_post( [
+			'ID' => $post_id,
+			'post_content' => $_POST['content'] . '[gallery include="' . $_POST['gallery'] . '"]'
+		] );
+	}
+}
 
-		foreach ($files['name'] as $key => $value) {
-			if ($files['name'][$key]) {
-				$file = [
-					'name' => $files['name'][$key],
-					'type' => $files['type'][$key],
-					'tmp_name' => $files['tmp_name'][$key],
-					'error' => $files['error'][$key],
-					'size' => $files['size'][$key]
-				];
+function handle_single_image_upload ( $image_name ) {
+	require_once( ABSPATH . 'wp-admin/includes/image.php' );
+	require_once( ABSPATH . 'wp-admin/includes/file.php' );
+	require_once( ABSPATH . 'wp-admin/includes/media.php' );
 
-				$_FILES = ["upload_file" => $file];
+	$thumbnail_id = media_handle_upload( $image_name, 0 );
 
-				foreach ($_FILES as $file => $array) {
-					$images_id[] = media_handle_upload( $file, $post_id );
-				}
-			}
-		}
+	if ( !is_wp_error( $thumbnail_id ) ) {
+		$response = [
+			'error' => false,
+			'id' => $thumbnail_id,
+			'src' => wp_get_attachment_image_src( $thumbnail_id )[0],
+			'title' => get_the_title( $thumbnail_id )
+		];
 
-		$old_gallery_ids = '';
-		if ( isset( $_POST['old_gallery'] ) && $_POST['old_gallery'] ) {
-			if ( count( $images_id ) > 0) {
-				$old_gallery_ids = ',';
-			}
-
-			$old_gallery_ids .= $_POST['old_gallery'];
-		}
-
-		// only add the shortcode to the post if it actually has any images
-		if ( $old_gallery_ids !== '' || count( $images_id ) !== 0 ) {
-			wp_update_post( [
-				'ID' => $post_id,
-				'post_content' => $_POST['content'] . '[gallery include="' . implode(",", $images_id) . $old_gallery_ids . '"]'
-			] );
-		}
+		die( json_encode( $response ) );
+	} else {
+		error("Failed to upload image.");
 	}
 }
 
 if ( is_user_logged_in() ) {
 	if (
-		isset(
-			$_POST['author_name'],
-			$_POST['title'],
-			$_POST['content'],
-			$_POST['image_nonce']
-		) &&
-		$_POST['author_name'] &&
-		$_POST['title'] &&
-		$_POST['content'] &&
-		wp_verify_nonce( $_POST['image_nonce'], 'image' ) &&
-		!isset( $_POST['post_id'] )
+		isset( $_POST['image_single_nonce'], $_FILES["image_single"] ) &&
+		wp_verify_nonce( $_POST['image_single_nonce'], 'image_single' )
+	){
+		// Gallery or feature image 'form'
+		handle_single_image_upload( 'image_single' );
+	} elseif (
+		(
+			isset(
+				$_POST['author_name'],
+				$_POST['title'],
+				$_POST['content']
+			) &&
+			$_POST['author_name'] &&
+			$_POST['title'] &&
+			$_POST['content']
+		) ||
+		(
+			isset( $_POST['post_id'] ) &&
+			$_POST['post_id']
+		)
 	) {
-		// Create Post
-
+		// Post submission form -alters an existing post if $_POST['post_id'] is set
 		global $current_user;
 		get_currentuserinfo();
 
+		$is_editing = isset( $_POST['post_id'] ) && $_POST['post_id'];
+
+		if ( $is_editing && ! user_can( $current_user, 'mccadminarea_teacher') ) {
+			error('Missing required permissions.');
+		}
+
 		// Post
-		$post_id = wp_insert_post( [
+
+		$post_args = [
 			'comment_status' => 'closed',
 			'ping_status' => 'closed',
 			'post_status' => user_can( $current_user, 'mccadminarea_teacher') ? 'publish' : 'draft',
-			'post_title' => $_POST['title'],
-			'post_content' => $_POST['content']
-		] );
+		];
+
+		if ( isset( $_POST['title'] ) && $_POST['title'] ) {
+			$post_args['post_title'] = $_POST['title'];
+		}
+
+		if ( isset( $_POST['content'] ) && $_POST['content'] ) {
+			$post_args['post_content'] = $_POST['content'];
+		}
+
+		$post_id = wp_insert_post( $post_args );
 
 		if ( !is_wp_error( $post_id ) ) {
 			// Categories
+
+			// Remove all existing categories
+			wp_set_post_categories( $post_id, [], false);
+
 			if ( user_can( $current_user, 'mccadminarea_teacher') ) {
 				foreach ($_POST as $key => $value) {
 					if (substr($key, 0, 4) === 'mcc_') {
@@ -103,74 +115,28 @@ if ( is_user_logged_in() ) {
 			}
 
 			// Name
-			add_post_meta($post_id, 'author_name', $_POST['author_name']);
+			if ( isset( $_POST['author_name'] ) && $_POST['author_name'] ) {
+				// If name is already set update it
+				if ( ! add_post_meta( $post_id, 'author_name', $_POST['author_name'], true ) ) {
+					update_post_meta( $post_id, 'author_name', $_POST['author_name'] );
+				}
+			}
 
-			// Feature Image
-			require_once( ABSPATH . 'wp-admin/includes/image.php' );
-			require_once( ABSPATH . 'wp-admin/includes/file.php' );
-			require_once( ABSPATH . 'wp-admin/includes/media.php' );
-
-			$thumbnail_id = media_handle_upload( 'image', $post_id );
-
-			if ( !is_wp_error( $thumbnail_id ) ) {
-				set_post_thumbnail( $post_id, $thumbnail_id );
+			// Feature image
+			if ( isset( $_POST['feature'] ) && $_POST['feature'] ) {
+				set_post_thumbnail( $post_id,  $_POST['feature'] );
 			}
 
 			// Gallery
-			upload_gallery ( $post_id );
+			add_gallery ( $post_id );
 
 			success();
 		} else {
 			error('Failed to create post.');
 		}
-	} elseif ( isset( $_POST['post_id'] ) && $_POST['post_id'] ) {
-		// Aprove post
-		if ( user_can( $current_user, 'mccadminarea_teacher') ) {
-			$post_args = [
-				'ID' => $_POST['post_id'],
-				'post_status' => 'publish'
-			];
-
-			if ( isset( $_POST['title'] ) && $_POST['title'] ) {
-				$post_args['post_title'] = $_POST['title'];
-			}
-			if ( isset( $_POST['content'] ) && $_POST['content'] ) {
-				$post_args['post_content'] = $_POST['content'];
-			}
-			$post_id = wp_update_post( $post_args );
-
-			if ( is_wp_error( $post_id ) ) {
-				error('Failed to update post.');
-			}
-
-			if ( isset( $_POST['author_name'] ) && $_POST['author_name'] ) {
-				update_post_meta( $post_id, 'author_name', $_POST['author_name'] );
-			}
-
-			// Feature image
-			require_once( ABSPATH . 'wp-admin/includes/image.php' );
-			require_once( ABSPATH . 'wp-admin/includes/file.php' );
-			require_once( ABSPATH . 'wp-admin/includes/media.php' );
-
-			if (
-				isset( $_POST['image_nonce'] ) &&
-				wp_verify_nonce( $_POST['image_nonce'], 'image' )
-			) {
-				$thumbnail_id = media_handle_upload( 'image', $post_id );
-
-				if ( !is_wp_error( $thumbnail_id ) ) {
-					set_post_thumbnail( $post_id, $thumbnail_id );
-				}
-			}
-
-			// Gallery
-			upload_gallery ( $post_id );
-
-			success();
-		} else {
-			error('Missing required permissions.');
-		}
 	} else {
 		error('Missing required parameters.');
 	}
+} else {
+	error('You need to be logged in to post content.');
 }

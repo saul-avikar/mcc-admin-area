@@ -1,6 +1,4 @@
-console.log("Loaded script");
 (function ($) {
-	console.log("Browser handled self-called function");
 	// Submit data, uses callbacks (puke) for browser compatibility
 	function submitData (data, successCallback, failCallback) {
 		console.log("Attempting to send data");
@@ -23,21 +21,116 @@ console.log("Loaded script");
 				}
 			}
 
-			console.log(response, data);
-
 			if (response.error) {
 				failCallback(response.msg)
 			} else{
-				successCallback();
+				successCallback(response);
 			}
 		});
 	}
 
+	function retrieveImageIdsFromChildren (container) {
+		var images = [];
+		var children = $(container).children();
+
+		for (var i = 0; i < children.length; i++) {
+			images.push( parseInt(
+				$(children[i]).attr("data-id")
+			) );
+		}
+
+		return images;
+	}
+
 	$(document).ready(function () {
-		console.log("Browser handled ready event");
+		// galery image single upload___________________________________________
+		$(".MCCAdminArea-upload-image").change(function () {
+			var fileInput = $(this);
+			var form = new FormData($(this).closest("form")[0]);
+			var isSingular = $(this).attr("data-singular") === "true";
+
+			console.log(isSingular);
+
+			submitData(form, function (imageData) {
+				// Success
+				var imagesList = fileInput.closest(".MCCAdminArea-file-upload-container").find(".MCCAdminArea-upload-images");
+				var imageElement = $("<div data-id='" + imageData.id + "' style='background-image: url(\"" + imageData.src + "\");'></div>");
+				var removalElement = $("<span>(X)</span>");
+
+				if (isSingular) {
+					imagesList.text("");
+				}
+
+				imageElement.append(imageData.title);
+				removalElement.appendTo(imageElement);
+				imageElement.appendTo(imagesList);
+
+				// Add the event to remove the image
+				removalElement.click(function () {
+					$(this).parent().remove();
+				});
+			}, function (error) {
+				// Fail
+				console.log(error);
+			});
+		});
+
+		// Post sumbission or approval__________________________________________
+		$(".MCCAdminArea-post-submit").click(function (e) {
+			e.preventDefault();
+
+			var container = $(this).parent();
+			//var postId = $(this).attr("name");
+			var form = new FormData(container.find("form")[0]);
+/*
+			// Only for post approval
+			if (postId) {
+				// remove prefix (mcc_)
+				postId = postId.slice(4);
+			} else {
+
+			}*/
+			// Gallery and feature image
+			var imageFieldContainers = container.find(".MCCAdminArea-upload-images");
+			var galleryImages = undefined;
+			var featureImage = undefined;
+
+			for (var i = 0; i < imageFieldContainers.length; i++) {
+				var imageFieldContainer = $(imageFieldContainers[i]);
+				var isSingular = $(imageFieldContainers[i]).attr("data-singular") === "true";
+
+				if (isSingular) {
+					// Feature image
+					featureImage = retrieveImageIdsFromChildren (
+						imageFieldContainers[i]
+					)[0];
+				} {
+					// Gallery images
+					galleryImages = retrieveImageIdsFromChildren (
+						imageFieldContainers[i]
+					);
+				}
+			}
+
+			if (featureImage) {
+				form.append("feature", featureImage);
+			}
+
+			form.append("gallery", galleryImages);
+
+			// Send it!
+			submitData(form, function (message) {
+				// Success
+				console.log(message);
+			}, function (error) {
+				// Fail
+				console.log(error);
+			});
+		});
+		// MCCAdminArea-post-form
+
 		// post submission
 		$("#MCCAdminArea-post-submit").click(function (e) {
-			console.log("Browser handled click event");
 			e.preventDefault();
 
 			submitData(new FormData($('#MCCAdminArea-post-form')[0]), function () {
@@ -90,15 +183,15 @@ console.log("Loaded script");
 			submitData(form, function () {
 				// Success
 					postContainer.hide(100);
-			}, function () {
+			}, function (error) {
 				// Fail
-				console.log(response.msg);
+				console.log(error);
 			});
 		});
 
 		// Misc
 		$(".MCCAdminArea-image-gallery-remove").click(function () {
-			$(this).parent().hide(0);
+			$(this).parent().remove();
 		});
 
 		$(".MCCAdminArea-post-title").click(function () {
