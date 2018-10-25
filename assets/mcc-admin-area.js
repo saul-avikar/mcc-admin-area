@@ -87,7 +87,7 @@
 			var sizeRestrictionElement = container.find(".MCCAdminArea-upload-image-size-failure");
 
 			// Hide any errors as we will display them again later if needed
-			failureMessageElement).hide(transitionSpeed);
+			failureMessageElement.hide(transitionSpeed);
 			sizeRestrictionElement.hide(transitionSpeed);
 
 			// 2MB restriction
