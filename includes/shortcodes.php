@@ -24,6 +24,11 @@ function loginForm_func ( $atts ){
 	if ( is_user_logged_in() ) {
 		js_redirect_home();
 	} else {
+		?>
+		<div class="MCCAdminArea-login-fail MCCAdminArea-hidden">
+			Login Failed.
+		</div>
+		<?php
 		wp_login_form();
 	}
 

@@ -11,6 +11,10 @@ class MCCAdminArea {
 		add_filter( 'query_vars', [get_called_class(), 'queryVars'] );
 		add_action( 'template_redirect', [get_called_class(), 'templateRedirect'] );
 
+		// Prevent the failed login redirect
+		add_action( 'wp_login_failed', [get_called_class(), 'login_fail'] );
+		add_action( 'authenticate', [get_called_class(), 'login_empty'] );
+
 		// Scripts and css
 		add_action('wp_enqueue_scripts', [get_called_class(), 'setupScripts']);
 
@@ -31,6 +35,32 @@ class MCCAdminArea {
 
 		wp_enqueue_script('mcc_admin_area', $asset_url . 'mcc-admin-area.js', ['jquery']);
 		wp_enqueue_style('mcc_admin_area', $asset_url . 'mcc-admin-area.css');
+	}
+
+	// Login Fail ______________________________________________________________
+	public static function login_fail( $username ) {
+		$referrer = $_SERVER['HTTP_REFERER'];
+
+		// if there's a valid referrer, and it's not the default log-in screen
+		if ( !empty($referrer) && !strstr($referrer,'wp-login') && !strstr($referrer,'wp-admin') ) {
+			if ( !strstr($referrer,'?login=failed') ) { // make sure we don’t append twice
+                wp_redirect( $referrer . '?login=failed' ); // append some information (login=failed) to the URL for the theme to use
+            } else {
+                wp_redirect( $referrer );
+            }
+			exit;
+		}
+	}
+
+	public static function login_empty( $username ) {
+		$referrer = $_SERVER['HTTP_REFERER'];
+        if ( strstr( $referrer, get_option( 'mccadminarea_loginPageName' ) ) && $user==null ) { // mylogin is the name of the loginpage.
+            if ( !strstr($referrer,'?login=empty') ) { // prevent appending twice
+                wp_redirect( $referrer . '?login=empty' );
+            } else {
+                wp_redirect( $referrer );
+            }
+        }
 	}
 
 	// Menu_____________________________________________________________________
@@ -59,7 +89,8 @@ class MCCAdminArea {
 			} else {
 				if (
 					$li->textContent === get_option( 'mccadminarea_teacherpostLabel' ) ||
-					$li->textContent === get_option( 'mccadminarea_studentpostLabel' )
+					$li->textContent === get_option( 'mccadminarea_studentpostLabel' ) ||
+					$li->textContent === get_option( 'mccadminarea_logoutLabel' )
 				) {
 					$items_to_remove[] = $li;
 				}
@@ -122,10 +153,14 @@ class MCCAdminArea {
 	public static function registerSettings() {
 		// add_option( 'option_name', 'default value' );
 		add_option( 'mccadminarea_loginLabel', 'Login' );
+		add_option( 'mccadminarea_loginPageName', 'Login' );
+		add_option( 'mccadminarea_logoutLabel', 'Logout' );
 		add_option( 'mccadminarea_teacherpostLabel', 'Admin' );
 		add_option( 'mccadminarea_studentpostLabel', 'Kids Zone' );
 
 		register_setting( 'mccadminarea_settings', 'mccadminarea_loginLabel' );
+		register_setting( 'mccadminarea_settings', 'mccadminarea_loginPageName' );
+		register_setting( 'mccadminarea_settings', 'mccadminarea_logoutLabel' );
 		register_setting( 'mccadminarea_settings', 'mccadminarea_teacherpostLabel' );
 		register_setting( 'mccadminarea_settings', 'mccadminarea_studentpostLabel' );
 	}

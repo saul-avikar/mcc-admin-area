@@ -17,6 +17,18 @@
 			</label>
 			<br />
 
+			<label for="mccadminarea_loginPageName">
+				<?php _e( 'Login Page Name:', 'mccadminarea' ); ?>
+				<input type="text" id="mccadminarea_loginPageName" name="mccadminarea_loginPageName" value="<?php echo get_option( 'mccadminarea_loginPageName' ); ?>" />
+			</label>
+			<br />
+
+			<label for="mccadminarea_logoutLabel">
+				<?php _e( 'Logout Menu Label:', 'mccadminarea' ); ?>
+				<input type="text" id="mccadminarea_logoutLabel" name="mccadminarea_logoutLabel" value="<?php echo get_option( 'mccadminarea_logoutLabel' ); ?>" />
+			</label>
+			<br />
+
 			<label for="mccadminarea_teacherpostLabel">
 				<?php _e( 'Teacher Admin Menu Label:', 'mccadminarea' ); ?>
 				<input type="text" id="mccadminarea_teacherpostLabel" name="mccadminarea_teacherpostLabel" value="<?php echo get_option( 'mccadminarea_teacherpostLabel' ); ?>" />

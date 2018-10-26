@@ -74,7 +74,27 @@
 		}, transitionSpeed);
 	}
 
+	function loginFailure () {
+		var get = {};
+		var login;
+
+		document.location.search.replace(/\??(?:([^=]+)=([^&]*)&?)/g, function () {
+			function decode(s) {
+				return decodeURIComponent(s.split("+").join(" "));
+			}
+
+			get[decode(arguments[1])] = decode(arguments[2]);
+		});
+
+		login = get["login"];
+		if (login.substr(0, 5) === "empty" || login.substr(0, 6) === "failed") {
+			$(".MCCAdminArea-login-fail").show(transitionSpeed);
+		}
+	}
+
 	$(document).ready(function () {
+		// Check for login failure______________________________________________
+		loginFailure();
 		// galery image single upload___________________________________________
 		$(".MCCAdminArea-upload-image").change(function (e) {
 			var fileInput = $(this);
