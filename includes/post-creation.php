@@ -1,6 +1,5 @@
 <?php
-// add_post_meta($post_id, '_thumbnail_id', $attach_id);
-// max file 2mb
+
 function error( $msg ) {
 	die('{"error": true, "msg": "' . $msg . '"}');
 }

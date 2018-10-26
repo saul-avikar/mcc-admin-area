@@ -36,25 +36,43 @@ class MCCAdminArea {
 	// Menu_____________________________________________________________________
 
 	public static function menu ( $items ) {
+		global $current_user;
+		get_currentuserinfo();
+
 		$dom = new DOMDocument;
 		$dom->loadHTML($items);
 		$lis = $dom->getElementsByTagName('li');
+		$items_to_remove = [];
 
-		foreach($lis as $li) {
-			if (
-				$li->textContent === (
-					is_user_logged_in() ?
-						get_option( 'mccadminarea_loginLabel' ) :
-						get_option( 'mccadminarea_postLabel' )
-				)
-			) {
-				$li->parentNode->removeChild( $li );
+		foreach( $lis as $li ) {
+			if ( is_user_logged_in() ) {
+				if (
+					$li->textContent === get_option( 'mccadminarea_loginLabel' ) ||
+					$li->textContent === (
+						user_can( $current_user, 'mccadminarea_teacher' ) ?
+							get_option( 'mccadminarea_studentpostLabel' ) :
+							get_option( 'mccadminarea_teacherpostLabel' )
+					)
+				) {
+					$items_to_remove[] = $li;
+				}
+			} else {
+				if (
+					$li->textContent === get_option( 'mccadminarea_teacherpostLabel' ) ||
+					$li->textContent === get_option( 'mccadminarea_studentpostLabel' )
+				) {
+					$items_to_remove[] = $li;
+				}
 			}
 		};
 
+		foreach ( $items_to_remove as $item_to_remove ) {
+			$item_to_remove->parentNode->removeChild( $item_to_remove );
+		}
+
 		$items = $dom->saveXML();
 
-		// DELETE LATER
+		// DELETE LATER----------------------------------------------------
 		if ( is_user_logged_in() ) {
 			global $current_user;
 			get_currentuserinfo();
@@ -78,6 +96,7 @@ class MCCAdminArea {
 				</style>";
 			}
 		}
+		// ----------------------------------------------------------------
 
 		return $items;
 	}
@@ -103,10 +122,12 @@ class MCCAdminArea {
 	public static function registerSettings() {
 		// add_option( 'option_name', 'default value' );
 		add_option( 'mccadminarea_loginLabel', 'Login' );
-		add_option( 'mccadminarea_postLabel', 'Post' );
+		add_option( 'mccadminarea_teacherpostLabel', 'Admin' );
+		add_option( 'mccadminarea_studentpostLabel', 'Kids Zone' );
 
 		register_setting( 'mccadminarea_settings', 'mccadminarea_loginLabel' );
-		register_setting( 'mccadminarea_settings', 'mccadminarea_postLabel' );
+		register_setting( 'mccadminarea_settings', 'mccadminarea_teacherpostLabel' );
+		register_setting( 'mccadminarea_settings', 'mccadminarea_studentpostLabel' );
 	}
 
 	// Redirect_________________________________________________________________

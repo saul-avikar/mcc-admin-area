@@ -11,11 +11,22 @@
 		<div>
 			<?php settings_fields( 'mccadminarea_settings' ); ?>
 
-			<label for="mccadminarea_postLabel"><?php _e( 'Post Menu Label:', 'mccadminarea' ); ?></label>
-			<input type="text" id="mccadminarea_postLabel" name="mccadminarea_postLabel" value="<?php echo get_option( 'mccadminarea_postLabel' ); ?>" />
+			<label for="mccadminarea_loginLabel">
+				<?php _e( 'Login Menu Label:', 'mccadminarea' ); ?>
+				<input type="text" id="mccadminarea_loginLabel" name="mccadminarea_loginLabel" value="<?php echo get_option( 'mccadminarea_loginLabel' ); ?>" />
+			</label>
+			<br />
 
-			<label for="mccadminarea_loginLabel"><?php _e( 'Login Menu Label:', 'mccadminarea' ); ?></label>
-			<input type="text" id="mccadminarea_loginLabel" name="mccadminarea_loginLabel" value="<?php echo get_option( 'mccadminarea_loginLabel' ); ?>" />
+			<label for="mccadminarea_teacherpostLabel">
+				<?php _e( 'Teacher Admin Menu Label:', 'mccadminarea' ); ?>
+				<input type="text" id="mccadminarea_teacherpostLabel" name="mccadminarea_teacherpostLabel" value="<?php echo get_option( 'mccadminarea_teacherpostLabel' ); ?>" />
+			</label>
+			<br />
+
+			<label for="mccadminarea_studentpostLabel">
+				<?php _e( 'Student Admin Menu Label:', 'mccadminarea' ); ?>
+				<input type="text" id="mccadminarea_studentpostLabel" name="mccadminarea_studentpostLabel" value="<?php echo get_option( 'mccadminarea_studentpostLabel' ); ?>" />
+			</label>
 		</div>
 		<?php submit_button(); ?>
 	</form>
