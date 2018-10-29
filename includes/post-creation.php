@@ -94,6 +94,9 @@ if ( is_user_logged_in() ) {
 		}
 
 		if ( isset( $post_id ) && !is_wp_error( $post_id ) ) {
+			// Template
+			update_post_meta( $post_id, '_wp_page_template', 'single-school-post.php' );
+
 			// Categories
 
 			// Remove all existing categories
