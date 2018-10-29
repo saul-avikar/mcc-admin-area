@@ -97,14 +97,14 @@ if ( is_user_logged_in() ) {
 			// Categories
 
 			// Remove all existing categories
-			wp_set_post_categories( $post_id, [], false);
+			$categories_to_add = [];
 
 			if ( user_can( $current_user, 'mccadminarea_teacher') ) {
 				foreach ($_POST as $key => $value) {
 					if (substr($key, 0, 4) === 'mcc_') {
 						$cat_id = substr($value, 4, strlen($value));
 
-						wp_set_post_categories( $post_id, $cat_id, true );
+						$categories_to_add[] = $cat_id;
 					}
 				}
 			} else {
@@ -113,9 +113,11 @@ if ( is_user_logged_in() ) {
 				$cat_id = $term->term_id;
 
 				if ( $cat_id ) {
-					wp_set_post_categories( $post_id, $cat_id, true );
+					$categories_to_add[] = $cat_id;
 				}
 			}
+
+			wp_set_post_categories( $post_id, $categories_to_add, false );
 
 			// Name
 			if ( isset( $_POST['author_name'] ) && $_POST['author_name'] ) {
