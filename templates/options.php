@@ -11,6 +11,18 @@
 		<div>
 			<?php settings_fields( 'mccadminarea_settings' ); ?>
 
+			<label for="mccadminarea_studentloginredirect">
+				<?php _e( 'Student Login Redirect URI:', 'mccadminarea' ); ?>
+				<input type="text" id="mccadminarea_studentloginredirect" name="mccadminarea_studentloginredirect" value="<?php echo get_option( 'mccadminarea_studentloginredirect' ); ?>" />
+			</label>
+			<br />
+
+			<label for="mccadminarea_teacherloginredirect">
+				<?php _e( 'Teacher Login Redirect URI:', 'mccadminarea' ); ?>
+				<input type="text" id="mccadminarea_teacherloginredirect" name="mccadminarea_teacherloginredirect" value="<?php echo get_option( 'mccadminarea_teacherloginredirect' ); ?>" />
+			</label>
+			<br />
+
 			<label for="mccadminarea_loginLabel">
 				<?php _e( 'Login Menu Label:', 'mccadminarea' ); ?>
 				<input type="text" id="mccadminarea_loginLabel" name="mccadminarea_loginLabel" value="<?php echo get_option( 'mccadminarea_loginLabel' ); ?>" />

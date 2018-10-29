@@ -6,6 +6,7 @@
 
 ?>
 <form method="post" enctype="multipart/form-data" class="MCCAdminArea-post-form">
+	<!-- Author -->
 	<label class="MCCAdminArea-post-form-author">
 		<?php _e('Name', 'mcc-admin-area'); ?>
 		<input
@@ -15,6 +16,7 @@
 		/>
 	</label>
 
+	<!-- Title -->
 	<label class="MCCAdminArea-post-form-title">
 		<?php _e('Post Title', 'mcc-admin-area'); ?>
 		<input
@@ -24,11 +26,25 @@
 		/>
 	</label>
 
+	<!-- Date -->
+	<?php if ( user_can( $current_user, 'mccadminarea_teacher') ) { ?>
+		<label class="MCCAdminArea-post-form-release-date">
+			<?php _e('Post Date', 'mcc-admin-area'); ?>
+			<input
+				type="date"
+				name="release_date"
+				value="<?php echo isset($form_data) ? $form_data['release_date'] : '' ?>"
+			/>
+		</label>
+	<?php } ?>
+
+	<!-- content -->
 	<label class="MCCAdminArea-post-form-content">
 		<?php _e('Post Content', 'mcc-admin-area'); ?>
 		<textarea name="content"><?php echo isset($form_data) ? $form_data['content'] : '' ?></textarea>
 	</label>
 
+	<!-- Categories -->
 	<?php
 	if ( user_can( $current_user, 'mccadminarea_teacher') ) {
 		$term = get_term_by( 'name', 'School Posts', 'category' );
@@ -40,6 +56,15 @@
 
 		if ( $children ) {
 			foreach( $children as $subcat ) {
+				$has_cat = false;
+
+				if ( isset( $form_data ) ) {
+					foreach ( $form_data['categories'] as $form_cat ) {
+						if ( $form_cat === $subcat->term_id ) {
+							$has_cat = true;
+						}
+					}
+				}
 				?>
 				<label
 					for="mcc_<?php echo $subcat->slug; ?>"
@@ -51,6 +76,7 @@
 						type="checkbox"
 						value="mcc_<?php echo $subcat->term_id; ?>"
 						id="mcc_<?php echo $subcat->slug; ?>"
+						<?php echo $has_cat ? 'checked' : ''; ?>
 					/>
 				</label>
 				<?php

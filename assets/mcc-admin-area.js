@@ -87,6 +87,11 @@
 		});
 
 		login = get["login"];
+
+		if (!login) {
+			return;
+		}
+
 		if (login.substr(0, 5) === "empty" || login.substr(0, 6) === "failed") {
 			$(".MCCAdminArea-login-fail").show(transitionSpeed);
 		}

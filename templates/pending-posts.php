@@ -13,7 +13,8 @@ function setFormData( $post ) {
 		'date' => $post->post_date,
 		'content' => $post->post_content,
 		'featured_image' => isset( $featured_image ) ? $featured_image : NULL,
-		'gallery' => []
+		'gallery' => [],
+		'categories' => wp_get_post_categories( $post->ID )
 	];
 
 	// Set the author name for display
@@ -23,6 +24,13 @@ function setFormData( $post ) {
 		$form_data['author'] = $form_data['author'][0];
 	} else {
 		$form_data['author'] = __('Author was not specified', 'mcc-admin-area');
+	}
+
+	// Set the release date for display
+	$form_data['release_date'] = get_post_meta( $post->ID, 'release_date' );
+
+	if ( count( $form_data['release_date'] ) !== 0 ) {
+		$form_data['release_date'] = $form_data['release_date'][0];
 	}
 
 	// Set the featured image data for display

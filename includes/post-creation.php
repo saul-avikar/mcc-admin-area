@@ -125,6 +125,14 @@ if ( is_user_logged_in() ) {
 				}
 			}
 
+			// Date
+			if ( isset( $_POST['release_date'] ) && $_POST['release_date'] ) {
+				// If date is already set update it
+				if ( ! add_post_meta( $post_id, 'release_date', $_POST['release_date'], true ) ) {
+					update_post_meta( $post_id, 'release_date', $_POST['release_date'] );
+				}
+			}
+
 			// Feature image
 			if ( isset( $_POST['feature'] ) && $_POST['feature'] ) {
 				set_post_thumbnail( $post_id,  $_POST['feature'] );

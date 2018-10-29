@@ -103,7 +103,7 @@ class MCCAdminArea {
 
 		$items = $dom->saveXML();
 
-		// DELETE LATER----------------------------------------------------
+		// DELETE LATER---------------------------------------------------------
 		if ( is_user_logged_in() ) {
 			global $current_user;
 			get_currentuserinfo();
@@ -127,7 +127,7 @@ class MCCAdminArea {
 				</style>";
 			}
 		}
-		// ----------------------------------------------------------------
+		// ---------------------------------------------------------------------
 
 		return $items;
 	}
@@ -157,12 +157,16 @@ class MCCAdminArea {
 		add_option( 'mccadminarea_logoutLabel', 'Logout' );
 		add_option( 'mccadminarea_teacherpostLabel', 'Admin' );
 		add_option( 'mccadminarea_studentpostLabel', 'Kids Zone' );
+		add_option( 'mccadminarea_studentloginredirect', '/' );
+		add_option( 'mccadminarea_teacherloginredirect', '/' );
 
 		register_setting( 'mccadminarea_settings', 'mccadminarea_loginLabel' );
 		register_setting( 'mccadminarea_settings', 'mccadminarea_loginPageName' );
 		register_setting( 'mccadminarea_settings', 'mccadminarea_logoutLabel' );
 		register_setting( 'mccadminarea_settings', 'mccadminarea_teacherpostLabel' );
 		register_setting( 'mccadminarea_settings', 'mccadminarea_studentpostLabel' );
+		register_setting( 'mccadminarea_settings', 'mccadminarea_studentloginredirect' );
+		register_setting( 'mccadminarea_settings', 'mccadminarea_teacherloginredirect' );
 	}
 
 	// Redirect_________________________________________________________________
